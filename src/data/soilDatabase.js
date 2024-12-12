@@ -12,7 +12,24 @@ export const soilDatabase = {
           k_status: "medium-high"
         },
         deficiencies: ["Zn", "Fe"],
-        rainfall: "800-900"
+        rainfall: "800-900",
+        suitable_crops: {
+          "Ragi": {
+            suitability: "high",
+            season: "Kharif",
+            yield_potential: "2.5-3.0 tonnes/ha"
+          },
+          "Millet": {
+            suitability: "high",
+            season: "Kharif",
+            yield_potential: "2.0-2.5 tonnes/ha"
+          },
+          "Cotton": {
+            suitability: "medium",
+            season: "Kharif",
+            yield_potential: "15-20 quintals/ha"
+          }
+        }
       },
       "Karnal": {
         soil_types: ["Alluvial", "Loamy"],
@@ -25,7 +42,19 @@ export const soilDatabase = {
           k_status: "medium-high"
         },
         deficiencies: ["Zn"],
-        rainfall: "650-750"
+        rainfall: "650-750",
+        suitable_crops: {
+          "Sugarcane": {
+            suitability: "high",
+            season: "Year-round",
+            yield_potential: "70-80 tonnes/ha"
+          },
+          "Cotton": {
+            suitability: "high",
+            season: "Kharif",
+            yield_potential: "20-25 quintals/ha"
+          }
+        }
       },
       "Panipat": {
         soil_types: ["Alluvial", "Loamy"],
@@ -418,4 +447,86 @@ export const nutrientStatus = {
     medium: "150-400 kg/ha",
     high: "> 400 kg/ha"
   }
+};
+
+// Add this helper function to simplify NPK ratios
+const simplifyNPKRatio = (n, p, k) => {
+  // Find the GCD of all three numbers
+  const findGCD = (a, b) => {
+    while (b) {
+      let t = b;
+      b = a % b;
+      a = t;
+    }
+    return a;
+  };
+
+  // First, convert to whole numbers by multiplying by 10
+  const scale = 10;
+  let nScaled = Math.round(n * scale);
+  let pScaled = Math.round(p * scale);
+  let kScaled = Math.round(k * scale);
+
+  // Find GCD of all three numbers
+  let gcd = findGCD(findGCD(nScaled, pScaled), kScaled);
+
+  // Return simplified ratio
+  return {
+    n: Math.round(nScaled / gcd),
+    p: Math.round(pScaled / gcd),
+    k: Math.round(kScaled / gcd)
+  };
+};
+
+// Modify the calculateFertilizerRecommendation function
+export const calculateFertilizerRecommendation = (crop, soilData, landArea) => {
+  const cropNPK = cropDatabase[crop].npk_ratio;
+  
+  // Convert soil content ranges to base values
+  const soilNPK = {
+    n: parseInt(soilData.nutrients.n_content.split('-')[0]),
+    p: parseInt(soilData.nutrients.p_content.split('-')[0]),
+    k: parseInt(soilData.nutrients.k_content.split('-')[0])
+  };
+
+  // Simplify the ratios
+  const simplifiedCropRatio = simplifyNPKRatio(cropNPK.n, cropNPK.p, cropNPK.k);
+  const simplifiedSoilRatio = simplifyNPKRatio(
+    soilNPK.n / 100,
+    soilNPK.p / 100,
+    soilNPK.k / 100
+  );
+
+  // Calculate deficits based on simplified ratios
+  const deficits = {
+    n: Math.max(0, (simplifiedCropRatio.n - simplifiedSoilRatio.n) * 100),
+    p: Math.max(0, (simplifiedCropRatio.p - simplifiedSoilRatio.p) * 100),
+    k: Math.max(0, (simplifiedCropRatio.k - simplifiedSoilRatio.k) * 100)
+  };
+
+  // Calculate fertilizer amounts with conversion factors
+  const fertilizers = {
+    urea: Math.round(deficits.n * 2.17),      // Convert N to Urea (46% N)
+    dap: Math.round(deficits.p * 5.43),       // Convert P to DAP (18% P)
+    mop: Math.round(deficits.k * 1.67),       // Convert K to MOP (60% K)
+    organic_manure: Math.round(10000)          // Base organic manure recommendation
+  };
+
+  return {
+    analysis: {
+      required: `${simplifiedCropRatio.n}:${simplifiedCropRatio.p}:${simplifiedCropRatio.k}`,
+      current_soil: `${simplifiedSoilRatio.n}:${simplifiedSoilRatio.p}:${simplifiedSoilRatio.k}`,
+      deficit: `${deficits.n}:${deficits.p}:${deficits.k}`
+    },
+    fertilizers: {
+      urea: Math.round(fertilizers.urea * landArea),
+      dap: Math.round(fertilizers.dap * landArea),
+      mop: Math.round(fertilizers.mop * landArea)
+    },
+    organic: {
+      fym: fertilizers.organic_manure * landArea / 1000,
+      vermicompost: (fertilizers.organic_manure / 2) * landArea / 1000,
+      neem_cake: (fertilizers.organic_manure / 20) * landArea / 1000
+    }
+  };
 };

@@ -36,6 +36,7 @@ const SoilManureCalculator = () => {
     });
   };
 
+  // Calculate manure recommendations
   const calculateRecommendations = () => {
     if (!state || !district || !selectedCrop || !landArea) {
       console.log("Missing required fields");
@@ -154,6 +155,38 @@ const SoilManureCalculator = () => {
         error: "Error calculating recommendations. Please check your inputs."
       });
     }
+  };
+
+  const simplifyRatio = (ratioString) => {
+    const [n, p, k] = ratioString.split(':').map(Number);
+    
+    // Find the largest value to use as base for scaling
+    const maxValue = Math.max(n, p, k);
+    
+    // Scale down to get single digits (target max value of 9)
+    const scaleFactor = maxValue > 9 ? Math.ceil(maxValue / 9) : 1;
+    
+    // Calculate simplified values and round to nearest whole number
+    const simplifiedN = Math.round(n / scaleFactor);
+    const simplifiedP = Math.round(p / scaleFactor);
+    const simplifiedK = Math.round(k / scaleFactor);
+    
+    // Further simplify by finding GCD
+    const gcd = findGCD(findGCD(simplifiedN, simplifiedP), simplifiedK);
+    
+    // Return simplified whole numbers
+    return `${Math.round(simplifiedN/gcd)}:${Math.round(simplifiedP/gcd)}:${Math.round(simplifiedK/gcd)}`;
+  };
+
+  const findGCD = (a, b) => {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while (b) {
+      let t = b;
+      b = a % b;
+      a = t;
+    }
+    return a;
   };
 
   return (

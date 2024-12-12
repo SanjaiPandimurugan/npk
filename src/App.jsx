@@ -7,7 +7,7 @@ function App() {
       {/* Header */}
       <header className="bg-green-600 text-white py-4 shadow-md">
         <div className="container mx-auto px-4">
-          <h1 className="text-2xl font-bold">Agricultural Nutrient Management System</h1>
+          <h1 className="text-2xl font-bold">Fertile Future30</h1>
           <p className="text-sm mt-1">Soil Testing and Fertilizer Recommendation System</p>
         </div>
       </header>
