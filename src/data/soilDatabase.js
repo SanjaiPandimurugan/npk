@@ -4,41 +4,20 @@ export const soilDatabase = {
       "Ambala": {
         soil_types: ["Alluvial", "Sandy loam"],
         nutrients: {
-          n_content: "170-240",
+          n_content: "3:1:4",
           n_status: "medium",
-          p_content: "15-25",
           p_status: "medium",
-          k_content: "210-410",
           k_status: "medium-high"
         },
         deficiencies: ["Zn", "Fe"],
-        rainfall: "800-900",
-        suitable_crops: {
-          "Ragi": {
-            suitability: "high",
-            season: "Kharif",
-            yield_potential: "2.5-3.0 tonnes/ha"
-          },
-          "Millet": {
-            suitability: "high",
-            season: "Kharif",
-            yield_potential: "2.0-2.5 tonnes/ha"
-          },
-          "Cotton": {
-            suitability: "medium",
-            season: "Kharif",
-            yield_potential: "15-20 quintals/ha"
-          }
-        }
+        rainfall: "800-900"
       },
       "Karnal": {
         soil_types: ["Alluvial", "Loamy"],
         nutrients: {
-          n_content: "180-250",
+          n_content: "4:1:5",
           n_status: "medium",
-          p_content: "15-25",
           p_status: "medium",
-          k_content: "200-450",
           k_status: "medium-high"
         },
         deficiencies: ["Zn"],
@@ -59,11 +38,9 @@ export const soilDatabase = {
       "Panipat": {
         soil_types: ["Alluvial", "Loamy"],
         nutrients: {
-          n_content: "170-240",
+          n_content: "4:1:4",
           n_status: "medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-400",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -72,11 +49,9 @@ export const soilDatabase = {
       "Sonipat": {
         soil_types: ["Alluvial", "Loamy"],
         nutrients: {
-          n_content: "170-240",
+          n_content: "4:1:4",
           n_status: "medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-400",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -85,11 +60,9 @@ export const soilDatabase = {
       "Rohtak": {
         soil_types: ["Alluvial", "Loamy"],
         nutrients: {
-          n_content: "170-230",
+          n_content: "4:1:4",
           n_status: "medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn", "B"],
@@ -98,11 +71,9 @@ export const soilDatabase = {
       "Jhajjar": {
         soil_types: ["Alluvial", "Loamy"],
         nutrients: {
-          n_content: "170-230",
+          n_content: "4:1:4",
           n_status: "medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -111,11 +82,9 @@ export const soilDatabase = {
       "Faridabad": {
         soil_types: ["Alluvial", "Light textured (loamy-sandy)"],
         nutrients: {
-          n_content: "150-230",
+          n_content: "3:1:4",
           n_status: "low-medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -124,11 +93,9 @@ export const soilDatabase = {
       "Palwal": {
         soil_types: ["Alluvial", "Light textured (loamy-sandy)"],
         nutrients: {
-          n_content: "150-230",
+          n_content: "3:1:4",
           n_status: "low-medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -137,11 +104,9 @@ export const soilDatabase = {
       "Gurugram": {
         soil_types: ["Alluvial", "Light textured (loamy-sandy)", "Aridic spots"],
         nutrients: {
-          n_content: "150-230",
+          n_content: "6:1:7",
           n_status: "low-medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn", "Fe"],
@@ -150,11 +115,9 @@ export const soilDatabase = {
       "Nuh": {
         soil_types: ["Sandy loam", "Aridic conditions"],
         nutrients: {
-          n_content: "150-220",
+          n_content: "6:1:6",
           n_status: "low-medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "150-300",
           k_status: "medium"
         },
         deficiencies: ["Zn", "B"],
@@ -163,11 +126,9 @@ export const soilDatabase = {
       "Rewari": {
         soil_types: ["Sandy loam", "Aridic conditions"],
         nutrients: {
-          n_content: "150-220",
+          n_content: "6:1:6",
           n_status: "low-medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "150-300",
           k_status: "medium"
         },
         deficiencies: ["Zn", "B"],
@@ -176,11 +137,9 @@ export const soilDatabase = {
       "Mahendragarh": {
         soil_types: ["Sandy loam", "Aridic conditions"],
         nutrients: {
-          n_content: "150-220",
+          n_content: "6:1:6",
           n_status: "low-medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "150-300",
           k_status: "medium"
         },
         deficiencies: ["Zn", "B"],
@@ -189,11 +148,9 @@ export const soilDatabase = {
       "Bhiwani": {
         soil_types: ["Sandy loam to sandy", "Aridic conditions"],
         nutrients: {
-          n_content: "120-200",
+          n_content: "5:1:6",
           n_status: "low-medium",
-          p_content: "5-15",
           p_status: "low-medium",
-          k_content: "150-300",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -202,11 +159,9 @@ export const soilDatabase = {
       "Jind": {
         soil_types: ["Alluvial", "Loamy"],
         nutrients: {
-          n_content: "170-230",
+          n_content: "7:1:7",
           n_status: "medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -215,11 +170,9 @@ export const soilDatabase = {
       "Hisar": {
         soil_types: ["Alluvial to slightly sandy loam"],
         nutrients: {
-          n_content: "150-230",
+          n_content: "6:1:6",
           n_status: "low-medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-300",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -228,11 +181,9 @@ export const soilDatabase = {
       "Fatehabad": {
         soil_types: ["Alluvial", "Light textured"],
         nutrients: {
-          n_content: "150-230",
+          n_content: "6:1:6",
           n_status: "low-medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-300",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -241,11 +192,9 @@ export const soilDatabase = {
       "Sirsa": {
         soil_types: ["Sandy loam", "Aridic conditions"],
         nutrients: {
-          n_content: "150-220",
+          n_content: "6:1:6",
           n_status: "low-medium",
-          p_content: "10-20",
           p_status: "low-medium",
-          k_content: "200-300",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -254,11 +203,9 @@ export const soilDatabase = {
       "Charkhi Dadri": {
         soil_types: ["Sandy loam to sandy", "Aridic conditions"],
         nutrients: {
-          n_content: "120-200",
+          n_content: "5:1:6",
           n_status: "low-medium",
-          p_content: "5-15",
           p_status: "low-medium",
-          k_content: "150-300",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -271,11 +218,9 @@ export const soilDatabase = {
       "Ariyalur": {
         soil_types: ["Red loamy", "Lateritic"],
         nutrients: {
-          n_content: "150-220",
+          n_content: "3:1:4",
           n_status: "medium",
-          p_content: "10-15",
           p_status: "low-medium",
-          k_content: "200-300",
           k_status: "medium"
         },
         deficiencies: ["Zn", "B"],
@@ -284,11 +229,9 @@ export const soilDatabase = {
       "Chengalpattu": {
         soil_types: ["Coastal alluvial", "Red sandy"],
         nutrients: {
-          n_content: "180-250",
+          n_content: "7:1:7",
           n_status: "medium",
-          p_content: "10-20",
           p_status: "medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -297,11 +240,9 @@ export const soilDatabase = {
       "Chennai": {
         soil_types: ["Coastal alluvial", "Sandy loam"],
         nutrients: {
-          n_content: "180-250",
+          n_content: "7:1:7",
           n_status: "medium",
-          p_content: "10-20",
           p_status: "medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -310,11 +251,9 @@ export const soilDatabase = {
       "Coimbatore": {
         soil_types: ["Red soils", "Black soils"],
         nutrients: {
-          n_content: "150-230",
+          n_content: "6:1:7",
           n_status: "medium",
-          p_content: "10-18",
           p_status: "medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn", "Fe"],
@@ -323,11 +262,9 @@ export const soilDatabase = {
       "Cuddalore": {
         soil_types: ["Coastal alluvial", "Deltaic soils"],
         nutrients: {
-          n_content: "180-250",
+          n_content: "7:1:8",
           n_status: "medium",
-          p_content: "10-20",
           p_status: "medium",
-          k_content: "200-400",
           k_status: "medium-high"
         },
         deficiencies: ["Zn"],
@@ -336,11 +273,9 @@ export const soilDatabase = {
       "Dharmapuri": {
         soil_types: ["Red loamy", "Lateritic soils"],
         nutrients: {
-          n_content: "150-200",
+          n_content: "6:1:6",
           n_status: "medium",
-          p_content: "5-15",
           p_status: "low-medium",
-          k_content: "150-300",
           k_status: "medium"
         },
         deficiencies: ["Zn", "B"],
@@ -349,11 +284,9 @@ export const soilDatabase = {
       "Dindigul": {
         soil_types: ["Red soils", "Black soils"],
         nutrients: {
-          n_content: "150-220",
+          n_content: "6:1:7",
           n_status: "medium",
-          p_content: "10-15",
           p_status: "low-medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn", "B"],
@@ -362,11 +295,9 @@ export const soilDatabase = {
       "Erode": {
         soil_types: ["Red soils", "Black soils"],
         nutrients: {
-          n_content: "150-230",
+          n_content: "6:1:7",
           n_status: "medium",
-          p_content: "10-18",
           p_status: "medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -375,11 +306,9 @@ export const soilDatabase = {
       "Kallakurichi": {
         soil_types: ["Red loamy", "Lateritic soils"],
         nutrients: {
-          n_content: "150-220",
+          n_content: "6:1:6",
           n_status: "medium",
-          p_content: "10-15",
           p_status: "low-medium",
-          k_content: "200-300",
           k_status: "medium"
         },
         deficiencies: ["Zn", "B"],
@@ -388,11 +317,9 @@ export const soilDatabase = {
       "Kanchipuram": {
         soil_types: ["Coastal alluvial", "Red sandy"],
         nutrients: {
-          n_content: "180-250",
+          n_content: "7:1:7",
           n_status: "medium",
-          p_content: "10-20",
           p_status: "medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn"],
@@ -401,15 +328,101 @@ export const soilDatabase = {
       "Kanniyakumari": {
         soil_types: ["Lateritic", "Red loam", "Coastal"],
         nutrients: {
-          n_content: "180-250",
+          n_content: "7:1:7",
           n_status: "medium",
-          p_content: "10-20",
           p_status: "medium",
-          k_content: "200-350",
           k_status: "medium"
         },
         deficiencies: ["Zn", "Fe"],
         rainfall: "1400-1800"
+      },
+      "Karur": {
+        soil_types: ["Red soils", "Black soils"],
+        nutrients: {
+          n_content: "6:1:7",
+          n_status: "medium",
+          p_status: "low-medium",
+          k_status: "medium"
+        },
+        deficiencies: ["Zn"],
+        rainfall: "600-700"
+      },
+      "Krishnagiri": {
+        soil_types: ["Red loamy", "Lateritic soils"],
+        nutrients: {
+          n_content: "6:1:6",
+          n_status: "medium",
+          p_status: "low-medium",
+          k_status: "medium"
+        },
+        deficiencies: ["Zn", "B"],
+        rainfall: "750-900"
+      },
+      "Madurai": {
+        soil_types: ["Red soils", "Black soils"],
+        nutrients: {
+          n_content: "6:1:7",
+          n_status: "medium",
+          p_status: "low-medium",
+          k_status: "medium"
+        },
+        deficiencies: ["Zn"],
+        rainfall: "850-950"
+      },
+      "Mayiladuthurai": {
+        soil_types: ["Alluvial", "Deltaic soils"],
+        nutrients: {
+          n_content: "7:1:8",
+          n_status: "medium",
+          p_status: "medium",
+          k_status: "medium-high"
+        },
+        deficiencies: ["Zn"],
+        rainfall: "1000-1200"
+      },
+      "Nagapattinam": {
+        soil_types: ["Coastal alluvial", "Deltaic soils"],
+        nutrients: {
+          n_content: "7:1:8",
+          n_status: "medium",
+          p_status: "medium",
+          k_status: "medium-high"
+        },
+        deficiencies: ["Zn"],
+        rainfall: "1000-1300"
+      },
+      "Namakkal": {
+        soil_types: ["Red soils", "Black soils"],
+        nutrients: {
+          n_content: "6:1:7",
+          n_status: "medium",
+          p_status: "low-medium",
+          k_status: "medium"
+        },
+        deficiencies: ["Zn"],
+        rainfall: "700-800"
+      },
+      "Nilgiris": {
+        soil_types: ["Mountainous", "Acidic", "Well-drained"],
+        nutrients: {
+          n_content: "6:1:6",
+          n_status: "medium",
+          p_status: "low-medium",
+          k_status: "medium"
+        },
+        deficiencies: ["Zn", "B", "Fe"],
+        rainfall: "1500-2000"
+      },
+      "Perambalur": {
+        soil_types: ["Red soils", "Black soils"],
+        nutrients: {
+          n_content: "6:1:6",
+          n_status: "medium",
+          p_status: "low-medium",
+          k_status: "medium"
+        },
+        deficiencies: ["Zn"],
+        rainfall: "800-900"
       }
     }
   }
@@ -449,84 +462,78 @@ export const nutrientStatus = {
   }
 };
 
-// Add this helper function to simplify NPK ratios
-const simplifyNPKRatio = (n, p, k) => {
-  // Find the GCD of all three numbers
-  const findGCD = (a, b) => {
-    while (b) {
-      let t = b;
-      b = a % b;
-      a = t;
+export const calculateFertilizerRecommendation = (crop, soilData, landArea) => {
+  try {
+    // Input validation
+    if (!crop || !soilData || !landArea) {
+      console.error("Missing required parameters:", { crop, soilData, landArea });
+      throw new Error("Missing required input data");
     }
-    return a;
-  };
 
-  // First, convert to whole numbers by multiplying by 10
-  const scale = 10;
-  let nScaled = Math.round(n * scale);
-  let pScaled = Math.round(p * scale);
-  let kScaled = Math.round(k * scale);
+    if (!soilData.nutrients || !soilData.nutrients.n_content) {
+      console.error("Invalid soil data structure:", soilData);
+      throw new Error("Invalid soil data");
+    }
 
-  // Find GCD of all three numbers
-  let gcd = findGCD(findGCD(nScaled, pScaled), kScaled);
+    // Parse the NPK ratio
+    const currentRatio = soilData.nutrients.n_content;
+    const [n, p, k] = currentRatio.split(':').map(num => parseInt(num, 10));
 
-  // Return simplified ratio
-  return {
-    n: Math.round(nScaled / gcd),
-    p: Math.round(pScaled / gcd),
-    k: Math.round(kScaled / gcd)
-  };
+    if (isNaN(n) || isNaN(p) || isNaN(k)) {
+      console.error("Invalid NPK ratio:", currentRatio);
+      throw new Error("Invalid NPK ratio format");
+    }
+
+    // Base calculations
+    const baseValues = {
+      n: n * 50,  // Scale up the ratio to actual values
+      p: p * 50,
+      k: k * 50
+    };
+
+    // Standard required values
+    const required = {
+      n: 250,  // Example values - adjust based on crop
+      p: 125,
+      k: 100
+    };
+
+    // Calculate deficits
+    const deficit = {
+      n: Math.max(0, required.n - baseValues.n),
+      p: Math.max(0, required.p - baseValues.p),
+      k: Math.max(0, required.k - baseValues.k)
+    };
+
+    return {
+      npk_analysis: {
+        required: "5:2:3",  // Standard ratio
+        current: currentRatio,
+        deficit: `${Math.round(deficit.n/50)}:${Math.round(deficit.p/50)}:${Math.round(deficit.k/50)}`
+      },
+      fertilizers: {
+        urea: Math.round(deficit.n * 2.17 * landArea),
+        dap: Math.round(deficit.p * 5.43 * landArea),
+        mop: Math.round(deficit.k * 1.67 * landArea)
+      },
+      organic: {
+        fym: Math.round(10000 * landArea / 1000),
+        vermicompost: Math.round(5000 * landArea / 1000),
+        neem_cake: Math.round(500 * landArea / 1000)
+      }
+    };
+  } catch (error) {
+    console.error("Calculation error details:", error);
+    throw new Error("Error calculating recommendations. Please check your inputs.");
+  }
 };
 
-// Modify the calculateFertilizerRecommendation function
-export const calculateFertilizerRecommendation = (crop, soilData, landArea) => {
-  const cropNPK = cropDatabase[crop].npk_ratio;
-  
-  // Convert soil content ranges to base values
-  const soilNPK = {
-    n: parseInt(soilData.nutrients.n_content.split('-')[0]),
-    p: parseInt(soilData.nutrients.p_content.split('-')[0]),
-    k: parseInt(soilData.nutrients.k_content.split('-')[0])
-  };
-
-  // Simplify the ratios
-  const simplifiedCropRatio = simplifyNPKRatio(cropNPK.n, cropNPK.p, cropNPK.k);
-  const simplifiedSoilRatio = simplifyNPKRatio(
-    soilNPK.n / 100,
-    soilNPK.p / 100,
-    soilNPK.k / 100
-  );
-
-  // Calculate deficits based on simplified ratios
-  const deficits = {
-    n: Math.max(0, (simplifiedCropRatio.n - simplifiedSoilRatio.n) * 100),
-    p: Math.max(0, (simplifiedCropRatio.p - simplifiedSoilRatio.p) * 100),
-    k: Math.max(0, (simplifiedCropRatio.k - simplifiedSoilRatio.k) * 100)
-  };
-
-  // Calculate fertilizer amounts with conversion factors
-  const fertilizers = {
-    urea: Math.round(deficits.n * 2.17),      // Convert N to Urea (46% N)
-    dap: Math.round(deficits.p * 5.43),       // Convert P to DAP (18% P)
-    mop: Math.round(deficits.k * 1.67),       // Convert K to MOP (60% K)
-    organic_manure: Math.round(10000)          // Base organic manure recommendation
-  };
-
+// Helper function to convert range to ratio
+const convertRangeToRatio = (n, p, k) => {
+  const minValue = Math.min(n, p, k);
   return {
-    analysis: {
-      required: `${simplifiedCropRatio.n}:${simplifiedCropRatio.p}:${simplifiedCropRatio.k}`,
-      current_soil: `${simplifiedSoilRatio.n}:${simplifiedSoilRatio.p}:${simplifiedSoilRatio.k}`,
-      deficit: `${deficits.n}:${deficits.p}:${deficits.k}`
-    },
-    fertilizers: {
-      urea: Math.round(fertilizers.urea * landArea),
-      dap: Math.round(fertilizers.dap * landArea),
-      mop: Math.round(fertilizers.mop * landArea)
-    },
-    organic: {
-      fym: fertilizers.organic_manure * landArea / 1000,
-      vermicompost: (fertilizers.organic_manure / 2) * landArea / 1000,
-      neem_cake: (fertilizers.organic_manure / 20) * landArea / 1000
-    }
+    n: Math.round(n/minValue),
+    p: Math.round(p/minValue),
+    k: Math.round(k/minValue)
   };
 };

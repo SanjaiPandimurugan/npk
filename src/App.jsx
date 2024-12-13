@@ -1,31 +1,16 @@
 import React from 'react';
-import SoilManureCalculator from './components/SoilManureCalculator';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import SoilManureRecommendation from './components/SoilManureRecommendation';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-green-600 text-white py-4 shadow-md">
-        <div className="container mx-auto px-4">
-          <h1 className="text-2xl font-bold">Fertile Future30</h1>
-          <p className="text-sm mt-1">Soil Testing and Fertilizer Recommendation System</p>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <SoilManureCalculator />
-        </div>
-      </main>
-
-      {/* Simple Footer */}
-      <footer className="bg-gray-100 py-4 mt-auto">
-        <div className="container mx-auto px-4 text-center text-sm text-gray-600">
-          <p>© 2024 Agricultural Nutrient Management System</p>
-        </div>
-      </footer>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/soil-manure-recommendation" element={<SoilManureRecommendation />} />
+        {/* Add other routes here */}
+        <Route path="/" element={<SoilManureRecommendation />} /> {/* Default route */}
+      </Routes>
+    </Router>
   );
 }
 

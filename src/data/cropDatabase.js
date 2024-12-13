@@ -49,7 +49,9 @@ export const cropDatabase = {
           ]
         }
       }
-    }
+    },
+    growth_duration_days: 115,
+    ph_range: "6.5-7.5"
   },
   "Bhendi": {
     scientific_name: "Abelmoschus esculentus",
@@ -835,5 +837,92 @@ export const getFertilizerSchedule = (crop) => {
     basal: { percentage: 40, timing: "Before sowing" },
     vegetative: { percentage: 30, timing: "30 days after sowing" },
     reproductive: { percentage: 30, timing: "60 days after sowing" }
+  };
+};
+
+export const calculateFertilizerRecommendation = (crop, soilData, landArea) => {
+  // Get crop NPK requirements from cropDatabase
+  const cropNPK = cropDatabase[crop]?.npk_ratio || { n: 1, p: 1, k: 1 };
+  
+  // Get soil NPK values
+  const soilNPK = {
+    n: parseFloat(soilData.nutrients.n_content.split('-')[0]),
+    p: parseFloat(soilData.nutrients.p_content.split('-')[0]),
+    k: parseFloat(soilData.nutrients.k_content.split('-')[0])
+  };
+
+  const simplifyRatio = (n, p, k) => {
+    // Find the minimum value
+    const minValue = Math.min(n, p, k);
+    if (minValue === 0) return { n: 0, p: 0, k: 0 };
+
+    // Calculate initial ratios
+    let ratios = {
+      n: Math.round((n / minValue) * 10) / 10,
+      p: Math.round((p / minValue) * 10) / 10,
+      k: Math.round((k / minValue) * 10) / 10
+    };
+
+    // Further simplify if all numbers are whole
+    while (
+      Number.isInteger(ratios.n) && 
+      Number.isInteger(ratios.p) && 
+      Number.isInteger(ratios.k) &&
+      Math.max(ratios.n, ratios.p, ratios.k) > 9
+    ) {
+      ratios.n /= 2;
+      ratios.p /= 2;
+      ratios.k /= 2;
+    }
+
+    return {
+      n: Math.round(ratios.n),
+      p: Math.round(ratios.p),
+      k: Math.round(ratios.k)
+    };
+  };
+
+  // Calculate current soil ratio
+  const currentRatio = simplifyRatio(
+    soilNPK.n,
+    soilNPK.p * 10, // Scale up P values to match N and K scale
+    soilNPK.k
+  );
+
+  // Calculate required ratio from crop database
+  const requiredRatio = simplifyRatio(
+    cropNPK.n,
+    cropNPK.p,
+    cropNPK.k
+  );
+
+  // Calculate deficit (what needs to be added)
+  const deficitRatio = simplifyRatio(
+    Math.max(0, cropNPK.n - (soilNPK.n / 100)),
+    Math.max(0, cropNPK.p - (soilNPK.p / 10)),
+    Math.max(0, cropNPK.k - (soilNPK.k / 100))
+  );
+
+  return {
+    analysis: {
+      current_soil: `${currentRatio.n}:${currentRatio.p}:${currentRatio.k}`,
+      required: `${requiredRatio.n}:${requiredRatio.p}:${requiredRatio.k}`,
+      deficit: `${deficitRatio.n}:${deficitRatio.p}:${deficitRatio.k}`,
+      raw_values: {
+        soil: soilNPK,
+        crop: cropNPK,
+        deficit: deficitRatio
+      }
+    },
+    fertilizers: {
+      urea: Math.round((deficitRatio.n * 2.17) * landArea),
+      dap: Math.round((deficitRatio.p * 5.43) * landArea),
+      mop: Math.round((deficitRatio.k * 1.67) * landArea)
+    },
+    organic: {
+      fym: Math.round(10000 * landArea / 1000),
+      vermicompost: Math.round(5000 * landArea / 1000),
+      neem_cake: Math.round(500 * landArea / 1000)
+    }
   };
 };
