@@ -2,6 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { soilDatabase, calculateFertilizerRecommendation } from '@/data/soilDatabase';
 import { cropDatabase } from '@/data/cropDatabase';
 import logo from '../assets/logo6.png'
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, query, orderBy, limit, onSnapshot, getDocs, enableIndexedDbPersistence } from 'firebase/firestore';
+
+// Use the same Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyBiVWzxSgMjib_BxqCBiycbh9x9YFQ0uZw",
+  authDomain: "hosting-c74b1.firebaseapp.com",
+  projectId: "hosting-c74b1",
+  storageBucket: "hosting-c74b1.firebasestorage.app",
+  messagingSenderId: "64402130067",
+  appId: "1:64402130067:web:3683373d07b29a916f3966",
+  measurementId: "G-DYJY25CLDE"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const InfoCard = ({ title, children, className }) => (
   <div className={`bg-white backdrop-blur-sm bg-white/90 rounded-2xl shadow-lg p-8 transform transition-all duration-300 hover:scale-[1.02] ${className}`}>
@@ -18,6 +34,13 @@ const SoilManureRecommendation = () => {
   const [recommendations, setRecommendations] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [sensorValues, setSensorValues] = useState({
+    nitrogen: 0,
+    phosphorus: 0,
+    potassium: 0,
+    pH: 0,
+    moisture: 0
+  });
 
   const states = Object.keys(soilDatabase);
 
@@ -106,6 +129,87 @@ const SoilManureRecommendation = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    try {
+      // Create a reference to the latest sensor data
+      const q = query(
+        collection(db, 'sensor_data'),  // Your existing collection name
+        orderBy('timestamp', 'desc'),
+        limit(1)
+      );
+
+      // Set up real-time listener
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        if (!querySnapshot.empty) {
+          const latestData = querySnapshot.docs[0].data();
+          console.log('Received sensor data:', latestData); // Debug log
+          
+          setSensorValues(prevValues => ({
+            ...prevValues,
+            pH: parseFloat(latestData.pH) || 0,
+            moisture: parseFloat(latestData.moisture) || 0,
+            // Keep default values for NPK since they're not in the database yet
+            nitrogen: 0,
+            phosphorus: 0,
+            potassium: 0
+          }));
+        }
+      }, (error) => {
+        console.error("Error fetching sensor data:", error);
+        setError("Failed to fetch sensor data");
+      });
+
+      // Cleanup subscription on unmount
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Firebase setup error:", error);
+      setError("Failed to connect to sensor");
+    }
+  }, []);
+
+  // Add error handling for Firebase connection
+  useEffect(() => {
+    const checkFirebaseConnection = async () => {
+      try {
+        // Test the connection by trying to get a document
+        const testQuery = query(collection(db, 'npk_sensor_data'), limit(1));
+        await getDocs(testQuery);
+        console.log("Firebase connection successful");
+      } catch (error) {
+        console.error("Firebase connection error:", error);
+        setError("Failed to connect to database");
+      }
+    };
+
+    checkFirebaseConnection();
+  }, []);
+
+  // Add this function to generate random values
+  const generateRandomValue = () => Math.floor(Math.random() * 100);
+
+  // Function to calculate recommendations based on NPK values
+  const calculateNPKBasedRecommendations = () => {
+    const n = sensorValues.nitrogen || 0;
+    const p = sensorValues.phosphorus || 0;
+    const k = sensorValues.potassium || 0;
+    
+    // Basic calculation example (you can adjust the formula as needed)
+    return {
+      fym: Math.max(0, Math.round((10 - n) * 100)),
+      vermicompost: Math.max(0, Math.round((5 - p) * 150)),
+      neemCake: Math.max(0, Math.round((7 - k) * 50))
+    };
+  };
+
+  const SensorCard = ({ title, value, unit }) => (
+    <div className="bg-gradient-to-r from-blue-50 to-white p-4 rounded-xl border border-blue-100">
+      <div className="flex justify-between items-center">
+        <span className="text-sm font-semibold text-blue-800">{title}</span>
+        <span className="text-2xl font-bold text-blue-700">{value} {unit}</span>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
@@ -240,27 +344,23 @@ const SoilManureRecommendation = () => {
         </form>
 
         {recommendations && (
-          <div className="space-y-12 mt-16 animate-fadeIn">
-            <div className="text-center relative">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="h-px w-full bg-gradient-to-r from-transparent via-green-200 to-transparent"></div>
-              </div>
-              <h3 className="relative inline-block px-8 py-2 bg-white text-3xl font-bold">
-                <span className="bg-gradient-to-br from-green-600 to-green-800 text-transparent bg-clip-text">
-                  Recommendations for {selectedCrop}
-                </span>
-              </h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="mt-8 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
-                  <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                    <span>NPK Analysis</span>
-                  </h3>
+                <div className="bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4">
+                  <h3 className="text-xl font-bold text-white">NPK Analysis</h3>
                 </div>
                 
                 <div className="p-6 space-y-4">
+                  <div className="bg-gradient-to-r from-green-50 to-white p-4 rounded-xl border border-green-100">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-semibold text-green-800">Current NPK Ratio</span>
+                      <span className="text-2xl font-bold text-green-700">
+                        {`${sensorValues.nitrogen || 0}:${sensorValues.phosphorus || 0}:${sensorValues.potassium || 0}`}
+                      </span>
+                    </div>
+                  </div>
+
                   <div className="bg-gradient-to-r from-blue-50 to-white p-4 rounded-xl border border-blue-100">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-semibold text-blue-800">Soil Analysis</span>
@@ -285,52 +385,68 @@ const SoilManureRecommendation = () => {
               </div>
 
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-4">
-                  <h3 className="text-xl font-bold text-white">Organic Manure Recommendations</h3>
+                <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4">
+                  <h3 className="text-xl font-bold text-white">Organic Manure Application</h3>
                 </div>
-                
-                <div className="p-6 space-y-4">
-                  <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
-                    <h4 className="font-semibold text-yellow-800 mb-2">Farmyard Manure (FYM)</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-yellow-700">Quantity</span>
-                        <span className="font-bold text-yellow-900">{recommendations.organic_manure.fym.quantity} Kg</span>
-                      </div>
-                      <div className="text-sm text-yellow-600 space-y-1">
-                        <p>⏰ {recommendations.organic_manure.fym.timing}</p>
-                        <p>📝 {recommendations.organic_manure.fym.method}</p>
-                        <p>✨ {recommendations.organic_manure.fym.benefits}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
-                    <h4 className="font-semibold text-yellow-800 mb-2">Vermicompost</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-yellow-700">Quantity</span>
-                        <span className="font-bold text-yellow-900">{recommendations.organic_manure.vermicompost.quantity} kg</span>
-                      </div>
-                      <div className="text-sm text-yellow-600 space-y-1">
-                        <p>⏰ {recommendations.organic_manure.vermicompost.timing}</p>
-                        <p>📝 {recommendations.organic_manure.vermicompost.method}</p>
-                        <p>✨ {recommendations.organic_manure.vermicompost.benefits}</p>
+                <div className="p-6">
+                  <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-green-50 to-white p-4 rounded-xl border border-green-100">
+                      <h4 className="font-semibold text-green-800 mb-2">Current NPK Based Recommendation</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-green-700">Quantity</span>
+                          <span className="font-bold text-green-900">{recommendations.organic_manure.vermicompost.quantity} kg</span>
+                        </div>
+                        <div className="text-sm text-green-600 space-y-1">
+                          <p>⏰ {recommendations.organic_manure.vermicompost.timing}</p>
+                          <p>📝 {recommendations.organic_manure.vermicompost.method}</p>
+                          <p>✨ {recommendations.organic_manure.vermicompost.benefits}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
-                    <h4 className="font-semibold text-yellow-800 mb-2">Neem Cake</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-yellow-700">Quantity</span>
-                        <span className="font-bold text-yellow-900">{recommendations.organic_manure.neem_cake.quantity} kg</span>
+                    <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
+                      <h4 className="font-semibold text-yellow-800 mb-2">Farmyard Manure (FYM)</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-yellow-700">Quantity</span>
+                          <span className="font-bold text-yellow-900">{recommendations.organic_manure.fym.quantity} Kg</span>
+                        </div>
+                        <div className="text-sm text-yellow-600 space-y-1">
+                          <p>⏰ {recommendations.organic_manure.fym.timing}</p>
+                          <p>📝 {recommendations.organic_manure.fym.method}</p>
+                          <p>✨ {recommendations.organic_manure.fym.benefits}</p>
+                        </div>
                       </div>
-                      <div className="text-sm text-yellow-600 space-y-1">
-                        <p>⏰ {recommendations.organic_manure.neem_cake.timing}</p>
-                        <p>📝 {recommendations.organic_manure.neem_cake.method}</p>
-                        <p>✨ {recommendations.organic_manure.neem_cake.benefits}</p>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
+                      <h4 className="font-semibold text-yellow-800 mb-2">Vermicompost</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-yellow-700">Quantity</span>
+                          <span className="font-bold text-yellow-900">{recommendations.organic_manure.vermicompost.quantity} kg</span>
+                        </div>
+                        <div className="text-sm text-yellow-600 space-y-1">
+                          <p>⏰ {recommendations.organic_manure.vermicompost.timing}</p>
+                          <p>📝 {recommendations.organic_manure.vermicompost.method}</p>
+                          <p>✨ {recommendations.organic_manure.vermicompost.benefits}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
+                      <h4 className="font-semibold text-yellow-800 mb-2">Neem Cake</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-yellow-700">Quantity</span>
+                          <span className="font-bold text-yellow-900">{recommendations.organic_manure.neem_cake.quantity} kg</span>
+                        </div>
+                        <div className="text-sm text-yellow-600 space-y-1">
+                          <p>⏰ {recommendations.organic_manure.neem_cake.timing}</p>
+                          <p>📝 {recommendations.organic_manure.neem_cake.method}</p>
+                          <p>✨ {recommendations.organic_manure.neem_cake.benefits}</p>
+                        </div>
                       </div>
                     </div>
                   </div>

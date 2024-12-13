@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Leaf, Droplets, Zap, FlaskConical, Waves } from 'lucide-react';
 import SensorCard from './SensorCard';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { getFirestore, collection, query, orderBy, limit, onSnapshot, getDocs, enableIndexedDbPersistence } from 'firebase/firestore';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -19,10 +19,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Enable offline persistence (optional)
+enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code == 'failed-precondition') {
+        console.log('Multiple tabs open, persistence can only be enabled in one tab at a a time.');
+    } else if (err.code == 'unimplemented') {
+        console.log('The current browser does not support persistence.');
+    }
+});
+
 const SensorDashboard = () => {
   const [latestValues, setLatestValues] = useState({
     ph: null,
-    moisture: null
+    moisture: null,
+    nitrogen: null,
+    phosphorus: null,
+    potassium: null
   });
 
   useEffect(() => {
@@ -38,7 +50,10 @@ const SensorDashboard = () => {
           const data = change.doc.data();
           setLatestValues({
             ph: data.ph,
-            moisture: data.moisture
+            moisture: data.moisture,
+            nitrogen: data.nitrogen || null,
+            phosphorus: data.phosphorus || null,
+            potassium: data.potassium || null
           });
         }
       });
@@ -52,7 +67,7 @@ const SensorDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <SensorCard
           title="Nitrogen"
-          value={null}
+          value={latestValues.nitrogen}
           unit="ratio"
           icon={<Leaf size={24} className="text-emerald-500" />}
           color="emerald"
@@ -61,7 +76,7 @@ const SensorDashboard = () => {
         />
         <SensorCard
           title="Phosphorus"
-          value={null}
+          value={latestValues.phosphorus}
           unit="ratio"
           icon={<FlaskConical size={24} className="text-blue-500" />}
           color="blue"
@@ -70,7 +85,7 @@ const SensorDashboard = () => {
         />
         <SensorCard
           title="Potassium"
-          value={null}
+          value={latestValues.potassium}
           unit="ratio"
           icon={<Zap size={24} className="text-amber-500" />}
           color="amber"
