@@ -47,6 +47,50 @@ export const cropDatabase = {
             "Sprinkler irrigation preferred",
             "Green manuring recommended"
           ]
+        },
+        "Ariyalur": {
+          recommended_varieties: ["CO 15", "GPU 28", "ML 365"],
+          sowing_time: "June-July",
+          harvest_time: "October-November",
+          irrigation_schedule: "4-5 irrigations",
+          expected_yield: "2.8-3.2 tonnes/ha",
+          local_practices: [
+            "Intercropping with pulses recommended",
+            "Application of FYM before sowing"
+          ]
+        },
+        "Chengalpattu": {
+          recommended_varieties: ["GPU 28", "KMR 301"],
+          sowing_time: "July-August",
+          harvest_time: "November-December",
+          irrigation_schedule: "5-6 irrigations",
+          expected_yield: "3.0-3.5 tonnes/ha",
+          local_practices: [
+            "Sprinkler irrigation preferred",
+            "Green manuring beneficial"
+          ]
+        },
+        "Cuddalore": {
+          recommended_varieties: ["CO 15", "Indaf 8"],
+          sowing_time: "June-July",
+          harvest_time: "October-November",
+          irrigation_schedule: "4-5 irrigations",
+          expected_yield: "2.7-3.1 tonnes/ha",
+          local_practices: [
+            "Line sowing recommended",
+            "Regular weeding important"
+          ]
+        },
+        "Kallakurichi": {
+          recommended_varieties: ["ML 365", "GPU 28"],
+          sowing_time: "July-August",
+          harvest_time: "November-December",
+          irrigation_schedule: "5-6 irrigations",
+          expected_yield: "2.9-3.3 tonnes/ha",
+          local_practices: [
+            "Seed treatment essential",
+            "Organic manure application recommended"
+          ]
         }
       }
     },
@@ -321,6 +365,28 @@ export const cropDatabase = {
             "Sustainable sugarcane initiative",
             "Chip bud method of planting"
           ]
+        },
+        "Ariyalur": {
+          recommended_varieties: ["CO 86032", "CO 0238"],
+          sowing_time: "December-January",
+          harvest_time: "December-January",
+          irrigation_schedule: "7-10 days interval",
+          expected_yield: "90-95 tonnes/ha",
+          local_practices: [
+            "Wide row spacing",
+            "Trash mulching"
+          ]
+        },
+        "Chengalpattu": {
+          recommended_varieties: ["CO 86032", "CO M 0265"],
+          sowing_time: "January-February",
+          harvest_time: "January-February",
+          irrigation_schedule: "8-10 days interval",
+          expected_yield: "85-90 tonnes/ha",
+          local_practices: [
+            "Drip irrigation preferred",
+            "Propping recommended"
+          ]
         }
       }
     }
@@ -429,6 +495,50 @@ export const cropDatabase = {
             "SRI method recommended",
             "Green manure application",
             "Alternate wetting and drying"
+          ]
+        },
+        "Ariyalur": {
+          recommended_varieties: ["ADT 43", "CR 1009"],
+          sowing_time: "June-July",
+          harvest_time: "October-November",
+          irrigation_schedule: "Daily irrigation",
+          expected_yield: "5.5-6.0 tonnes/ha",
+          local_practices: [
+            "SRI method recommended",
+            "Green manuring beneficial"
+          ]
+        },
+        "Chengalpattu": {
+          recommended_varieties: ["ADT 45", "BPT 5204"],
+          sowing_time: "August-September",
+          harvest_time: "December-January",
+          irrigation_schedule: "Daily irrigation",
+          expected_yield: "5.8-6.2 tonnes/ha",
+          local_practices: [
+            "Direct seeding suitable",
+            "Zinc application recommended"
+          ]
+        },
+        "Cuddalore": {
+          recommended_varieties: ["CO 51", "ADT 49"],
+          sowing_time: "July-August",
+          harvest_time: "November-December",
+          irrigation_schedule: "Daily irrigation",
+          expected_yield: "5.6-6.1 tonnes/ha",
+          local_practices: [
+            "Machine transplanting preferred",
+            "Integrated pest management"
+          ]
+        },
+        "Kallakurichi": {
+          recommended_varieties: ["ADT 45", "CR 1009"],
+          sowing_time: "August-September",
+          harvest_time: "December-January",
+          irrigation_schedule: "Daily irrigation",
+          expected_yield: "5.7-6.3 tonnes/ha",
+          local_practices: [
+            "Line transplanting recommended",
+            "Foliar spray of nutrients"
           ]
         }
       }

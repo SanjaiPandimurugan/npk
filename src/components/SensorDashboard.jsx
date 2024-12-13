@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Leaf, Droplets, Zap, FlaskConical, Waves } from 'lucide-react';
 import SensorCard from './SensorCard';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, query, orderBy, limit, onSnapshot, getDocs, enableIndexedDbPersistence } from 'firebase/firestore';
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -17,49 +18,60 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 const db = getFirestore(app);
-
-// Enable offline persistence (optional)
-enableIndexedDbPersistence(db).catch((err) => {
-    if (err.code == 'failed-precondition') {
-        console.log('Multiple tabs open, persistence can only be enabled in one tab at a a time.');
-    } else if (err.code == 'unimplemented') {
-        console.log('The current browser does not support persistence.');
-    }
-});
 
 const SensorDashboard = () => {
   const [latestValues, setLatestValues] = useState({
-    ph: null,
-    moisture: null,
-    nitrogen: null,
-    phosphorus: null,
-    potassium: null
+    ph: '--',
+    moisture: '--',
+    nitrogen: '--',
+    phosphorus: '--',
+    potassium: '--',
+    timestamp: null
   });
 
+  const fetchLatestData = async () => {
+    try {
+      const q = query(
+        collection(db, 'sensor_data'),
+        orderBy('timestamp', 'desc'),
+        limit(1)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        const data = doc.data();
+        console.log('Fetched data:', data); // Debug log
+
+        setLatestValues({
+          ph: data.ph || '--',
+          moisture: data.moisture || '--',
+          nitrogen: data.nitrogen || '--',
+          phosphorus: data.phosphorus || '--',
+          potassium: data.potassium || '--',
+          timestamp: data.timestamp
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLatestValues(prev => ({
+        ...prev,
+        ph: '--',
+        moisture: '--',
+        nitrogen: '--',
+        phosphorus: '--',
+        potassium: '--'
+      }));
+    }
+  };
+
   useEffect(() => {
-    const q = query(
-      collection(db, 'sensor_data'),
-      orderBy('timestamp', 'desc'),
-      limit(1)
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "added" || change.type === "modified") {
-          const data = change.doc.data();
-          setLatestValues({
-            ph: data.ph,
-            moisture: data.moisture,
-            nitrogen: data.nitrogen || null,
-            phosphorus: data.phosphorus || null,
-            potassium: data.potassium || null
-          });
-        }
-      });
-    });
-
-    return () => unsubscribe();
+    fetchLatestData();
+    const interval = setInterval(fetchLatestData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -68,29 +80,26 @@ const SensorDashboard = () => {
         <SensorCard
           title="Nitrogen"
           value={latestValues.nitrogen}
-          unit="ratio"
+          unit="mg/kg"
           icon={<Leaf size={24} className="text-emerald-500" />}
           color="emerald"
-          data={[]}
-          range={{ min: 0, max: 10, optimal: 6 }}
+          timestamp={latestValues.timestamp}
         />
         <SensorCard
           title="Phosphorus"
           value={latestValues.phosphorus}
-          unit="ratio"
+          unit="mg/kg"
           icon={<FlaskConical size={24} className="text-blue-500" />}
           color="blue"
-          data={[]}
-          range={{ min: 0, max: 5, optimal: 3 }}
+          timestamp={latestValues.timestamp}
         />
         <SensorCard
           title="Potassium"
           value={latestValues.potassium}
-          unit="ratio"
+          unit="mg/kg"
           icon={<Zap size={24} className="text-amber-500" />}
           color="amber"
-          data={[]}
-          range={{ min: 0, max: 10, optimal: 7 }}
+          timestamp={latestValues.timestamp}
         />
         <SensorCard
           title="pH Level"
@@ -98,8 +107,7 @@ const SensorDashboard = () => {
           unit="pH"
           icon={<Droplets size={24} className="text-rose-500" />}
           color="rose"
-          data={[]}
-          range={{ min: 6.0, max: 7.0, optimal: 6.5 }}
+          timestamp={latestValues.timestamp}
         />
         <SensorCard
           title="Moisture"
@@ -107,8 +115,7 @@ const SensorDashboard = () => {
           unit="%"
           icon={<Waves size={24} className="text-cyan-500" />}
           color="cyan"
-          data={[]}
-          range={{ min: 30, max: 60, optimal: 45 }}
+          timestamp={latestValues.timestamp}
         />
       </div>
     </div>
