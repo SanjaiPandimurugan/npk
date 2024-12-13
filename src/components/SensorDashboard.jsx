@@ -4,6 +4,8 @@ import SensorCard from './SensorCard';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
+import { useLanguage } from '../contexts/LanguageContext';
+import translations from '../translations';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -22,6 +24,9 @@ const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
 const SensorDashboard = () => {
+  const { currentLanguage } = useLanguage();
+  const t = translations[currentLanguage];
+
   const [latestValues, setLatestValues] = useState({
     ph: '--',
     moisture: '--',
@@ -44,7 +49,7 @@ const SensorDashboard = () => {
       if (!querySnapshot.empty) {
         const doc = querySnapshot.docs[0];
         const data = doc.data();
-        console.log('Fetched data:', data); // Debug log
+        console.log('Fetched data:', data);
 
         setLatestValues({
           ph: data.ph || '--',
@@ -74,48 +79,69 @@ const SensorDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Get sensor translations
+  const sensorTranslations = t?.sensors || {};
+
   return (
     <div className="container mx-auto px-4 py-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">{t?.realTimeNutrients}</h2>
+        <p className="text-sm text-gray-600">
+          {t?.lastUpdated}: {latestValues.timestamp ? '5' : '--'} {t?.minutesAgo}
+        </p>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <SensorCard
-          title="Nitrogen"
+          title={sensorTranslations.nitrogen?.title}
           value={latestValues.nitrogen}
-          unit="mg/kg"
+          unit={sensorTranslations.nitrogen?.unit}
           icon={<Leaf size={24} className="text-emerald-500" />}
           color="emerald"
           timestamp={latestValues.timestamp}
+          optimal={sensorTranslations.nitrogen?.optimal}
+          status={sensorTranslations.nitrogen?.status}
         />
         <SensorCard
-          title="Phosphorus"
+          title={sensorTranslations.phosphorous?.title}
           value={latestValues.phosphorus}
-          unit="mg/kg"
+          unit={sensorTranslations.phosphorous?.unit}
           icon={<FlaskConical size={24} className="text-blue-500" />}
           color="blue"
           timestamp={latestValues.timestamp}
+          optimal={sensorTranslations.phosphorous?.optimal}
+          status={sensorTranslations.phosphorous?.status}
         />
         <SensorCard
-          title="Potassium"
+          title={sensorTranslations.potassium?.title}
           value={latestValues.potassium}
-          unit="mg/kg"
+          unit={sensorTranslations.potassium?.unit}
           icon={<Zap size={24} className="text-amber-500" />}
           color="amber"
           timestamp={latestValues.timestamp}
+          optimal={sensorTranslations.potassium?.optimal}
+          status={sensorTranslations.potassium?.status}
         />
         <SensorCard
-          title="pH Level"
+          title={sensorTranslations.ph?.title}
           value={latestValues.ph}
-          unit="pH"
+          unit={sensorTranslations.ph?.unit}
           icon={<Droplets size={24} className="text-rose-500" />}
           color="rose"
           timestamp={latestValues.timestamp}
+          optimal={sensorTranslations.ph?.optimal}
+          status={sensorTranslations.ph?.status}
         />
         <SensorCard
-          title="Moisture"
+          title={sensorTranslations.moisture?.title}
           value={latestValues.moisture}
-          unit="%"
+          unit={sensorTranslations.moisture?.unit}
           icon={<Waves size={24} className="text-cyan-500" />}
           color="cyan"
           timestamp={latestValues.timestamp}
+          optimal={sensorTranslations.moisture?.optimal}
+          status={sensorTranslations.moisture?.status}
+          range={{ min: 30, max: 60, optimal: 45 }}
         />
       </div>
     </div>

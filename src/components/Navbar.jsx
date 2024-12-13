@@ -1,17 +1,26 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calculator } from 'lucide-react';
+import { Home, Calculator, Globe } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { translations } from '../translations/index.js';
 import logo from '../assets/logo6.png';
 
 const Navbar = () => {
   const location = useLocation();
+  const { currentLanguage, setCurrentLanguage } = useLanguage();
+  const t = translations[currentLanguage];
 
-  const scrollToCalculator = (e) => {
-    e.preventDefault();
-    const calculatorSection = document.getElementById('calculator-section');
-    if (calculatorSection) {
-      calculatorSection.scrollIntoView({ behavior: 'smooth' });
-    }
+  const languages = [
+    { code: 'english', label: 'English', flag: '🇬🇧' },
+    { code: 'tamil', label: 'தமிழ்', flag: '🇮🇳' },
+    { code: 'hindi', label: 'हिंदी', flag: '🇮🇳' },
+    { code: 'haryanvi', label: 'हरियाणवी', flag: '🇮🇳' }
+  ];
+
+  const handleLanguageChange = (langCode) => {
+    setCurrentLanguage(langCode);
+    // Optional: Save to localStorage to persist the choice
+    localStorage.setItem('preferredLanguage', langCode);
   };
 
   return (
@@ -21,10 +30,10 @@ const Navbar = () => {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
             <img src={logo} alt="Logo" className="h-10 w-10 rounded-full shadow-md" />
-            <span className="text-white font-semibold text-lg">FertileFuture30</span>
+            <span className="text-white font-semibold text-lg">{t.brandName}</span>
           </div>
 
-          {/* Navigation Links */}
+          {/* Navigation Links and Language Selector */}
           <div className="flex items-center space-x-6">
             <Link
               to="/"
@@ -34,17 +43,57 @@ const Navbar = () => {
                   : 'text-green-100 hover:bg-green-700/30'}`}
             >
               <Home size={18} />
-              <span>Home</span>
+              <span>{t.home}</span>
             </Link>
-            
-            <button
-              onClick={scrollToCalculator}
-              className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors
-                text-green-100 hover:bg-green-700/30"
+
+            {/* Language Selector Dropdown */}
+            <div className="relative group">
+              <button 
+                className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium 
+                         text-green-100 hover:bg-green-700/30 transition-colors"
+                aria-label="Select Language"
+              >
+                <Globe size={18} />
+                <span className="ml-1">
+                  {languages.find(lang => lang.code === currentLanguage)?.flag}
+                </span>
+                <span className="hidden md:inline ml-1">
+                  {languages.find(lang => lang.code === currentLanguage)?.label}
+                </span>
+              </button>
+
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black 
+                            ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+                            transition-all duration-200 transform origin-top-right">
+                <div className="py-1">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => handleLanguageChange(lang.code)}
+                      className={`flex items-center w-full px-4 py-2 text-sm text-left
+                                ${currentLanguage === lang.code 
+                                  ? 'bg-green-50 text-green-700' 
+                                  : 'text-gray-700 hover:bg-green-50 hover:text-green-700'}
+                                transition-colors duration-150`}
+                    >
+                      <span className="mr-2">{lang.flag}</span>
+                      <span>{lang.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Calculator Link */}
+            <Link
+              to="/calculator"
+              className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium 
+                       text-green-100 hover:bg-green-700/30 transition-colors"
             >
               <Calculator size={18} />
-              <span>OM Calculator</span>
-            </button>
+              <span>{t.calculator}</span>
+            </Link>
           </div>
         </div>
       </div>
