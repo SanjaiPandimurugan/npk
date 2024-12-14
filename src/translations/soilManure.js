@@ -200,15 +200,16 @@ const soilManureTranslations = {
     },
     organicManure: {
       title: "जैविक खाद का प्रयोग",
-      currentRecommendation: "मौजूदा एनपीके आधारित सिफारिश",
+      currentRecommendation: "वर्तमान एनपीके आधारित सिफारिश",
       fym: "गोबर की खाद",
       vermicompost: "केंचुए की खाद",
       neemCake: "नीम की खल्ली",
       quantity: "मात्रा",
-      timing: "टाइम",
-      method: "तरीका",
-      benefits: "फायदे",
-      currentNPKBasedRecommendation: "Current NPK Based Recommendation"
+      timing: "बुवाई से पहले डालें",
+      method: "मिट्टी में मिलाकर छिड़काव करें",
+      benefits: "मिट्टी की संरचना और पोषक तत्वों में सुधार करता है",
+      currentNPKBasedRecommendation: "वर्तमान एनपीके आधारित सिफारिश",
+      npkRecommendationHeading: "एनपीके आधारित जैविक खाद सिफारिश"
     },
     results: {
       soilHealth: "जमीन स्वास्थ्य विश्लेषण",
@@ -310,7 +311,8 @@ const soilManureTranslations = {
       timing: "ਰੋਪਣ ਤੋਂ 2-3 ਸਪਤਾਹ ਪਹਿਲਾਂ ਡਾਲੋ",
       method: "ਰੋਪਣ ਪੰਕਤਿਯੋਂ ਮਿਲਾਉਣ",
       benefits: "ਲਾਭ",
-      currentNPKBasedRecommendation: "Current NPK Based Recommendation"
+      currentNPKBasedRecommendation: "ਮੌਜੂਦਾ ਐਨਪੀਕੇ ਅਧਾਰਿਤ ਸਿਫਾਰਸ਼",
+      npkRecommendationHeading: "ਐਨਪੀਕੇ ਅਧਾਰਿਤ ਜੈਵਿਕ ਖਾਦ ਸਿਫਾਰਸ਼"
     },
     results: {
       soilHealth: "ਜਮੀਨ ਸਿਹਤ ਵਿਸ਼ਲੇਸ਼ਣ",
@@ -506,16 +508,17 @@ const soilManureTranslations = {
       additionalNutrients: "अतिरिक्त पोषक तत्व"
     },
     organicManure: {
-      title: "जैविक खाद का प्रयोग",
-      currentRecommendation: "मौजूदा एनपीके आधारित सिफारिश",
+      title: "जैविक खाद को प्रयोग",
+      currentRecommendation: "अभी को एनपीके आधारित सिफारिश",
       fym: "गोबर की खाद",
-      vermicompost: "केंचुए की खाद",
+      vermicompost: "केचुए की खाद",
       neemCake: "नीम की खल्ली",
       quantity: "मात्रा",
-      timing: "टाइम",
-      method: "तरीका",
-      benefits: "फायदे",
-      currentNPKBasedRecommendation: "Current NPK Based Recommendation"
+      timing: "बुआई से पहल्यां डालो",
+      method: "माटी मैं मिलाकै छिड़को",
+      benefits: "माटी की बनावट अर पोषक तत्वां मैं सुधार करै सै",
+      currentNPKBasedRecommendation: "अभी को एनपीके आधारित सिफारिश",
+      npkRecommendationHeading: "एनपीके आधारित जैविक खाद सिफारिश"
     },
     results: {
       soilHealth: "जमीन स्वास्थ्य विश्लेषण",
