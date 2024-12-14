@@ -4,6 +4,7 @@ const sensorTranslations = {
     lastUpdated: "Last Updated",
     minutesAgo: "minutes ago",
     sensors: {
+      normalRange: "Normal Range",
       nitrogen: {
         heading: "Nitrogen Levels",
         title: "Nitrogen (N)",
@@ -54,13 +55,15 @@ const sensorTranslations = {
         good: "Moist",
         high: "Wet"
       }
-    }
+    },
+    normalRange: "Normal Range"
   },
   tamil: {
     realTimeNutrients: "நேரடி ஊட்டச்சத்து அளவுகள்",
     lastUpdated: "கடைசியாக புதுப்பிக்கப்பட்டது",
     minutesAgo: "நிமிடங்களுக்கு முன்",
     sensors: {
+      normalRange: "சாதாரண வரம்பு",
       nitrogen: {
         heading: "நைட்ரஜன் அளவுகள்",
         title: "நைட்ரஜன் (N)",
@@ -111,7 +114,7 @@ const sensorTranslations = {
         good: "ஈரமான",
         high: "நனைந்த"
       }
-    }
+    },
   },
   hindi: {
     realTimeNutrients: "वास्तविक समय पोषक स्तर",

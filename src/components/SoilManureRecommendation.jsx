@@ -385,46 +385,46 @@ const SoilManureRecommendation = () => {
                 <div className="p-6">
                   <div className="space-y-4">
                   <div className="bg-gradient-to-r from-green-50 to-white p-4 rounded-xl border border-green-100">
-                    <h4 className="font-semibold text-green-800 mb-2">Current NPK Based Recommendation</h4>
+                    <h4 className="font-semibold text-green-800 mb-2">{t.organicManure.npkRecommendationHeading}</h4>
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-green-700">{t.organicManure.quantity}</span>
                         <span className="font-bold text-green-900">{recommendations.organic_manure.vermicompost.quantity} kg</span>
                       </div>
                       <div className="text-sm text-green-600 space-y-1">
-                        <p>⏰ {t.recommendations.timing.beforePlanting}</p>
-                        <p>📝 {t.recommendations.methods.mixRows}</p>
-                        <p>✨ {t.recommendations.benefits.nutrients}</p>
+                        <p>⏰ {t.organicManure.timing}</p>
+                        <p>📝 {t.organicManure.method}</p>
+                        <p>✨ {t.organicManure.benefits}</p>
                       </div>
                     </div>
                   </div>
 
                     <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
-                      <h4 className="font-semibold text-yellow-800 mb-2">Farmyard Manure (FYM)</h4>
+                      <h4 className="font-semibold text-yellow-800 mb-2">{t.organicManure.fym}</h4>
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="text-yellow-700">{t.organicManure.quantity}</span>
                           <span className="font-bold text-yellow-900">{recommendations.organic_manure.fym.quantity} Kg</span>
                         </div>
                         <div className="text-sm text-yellow-600 space-y-1">
-                          <p>⏰ {recommendations.organic_manure.fym.timing}</p>
-                          <p>📝 {recommendations.organic_manure.fym.method}</p>
-                          <p>✨ {recommendations.organic_manure.fym.benefits}</p>
+                          <p>⏰ {t.organicManure.timing}</p>
+                          <p>📝 {t.organicManure.method}</p>
+                          <p>✨ {t.organicManure.benefits}</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
-                      <h4 className="font-semibold text-yellow-800 mb-2">Vermicompost</h4>
+                      <h4 className="font-semibold text-yellow-800 mb-2">{t.organicManure.vermicompost}</h4>
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="text-yellow-700">{t.organicManure.quantity}</span>
                           <span className="font-bold text-yellow-900">{recommendations.organic_manure.vermicompost.quantity} kg</span>
                         </div>
                         <div className="text-sm text-yellow-600 space-y-1">
-                          <p>⏰ {recommendations.organic_manure.vermicompost.timing}</p>
-                          <p>📝 {recommendations.organic_manure.vermicompost.method}</p>
-                          <p>✨ {recommendations.organic_manure.vermicompost.benefits}</p>
+                          <p>⏰ {t.organicManure.timing}</p>
+                          <p>📝 {t.organicManure.method}</p>
+                          <p>✨ {t.organicManure.benefits}</p>
                         </div>
                       </div>
                     </div>
@@ -437,9 +437,9 @@ const SoilManureRecommendation = () => {
                           <span className="font-bold text-yellow-900">{recommendations.organic_manure.neem_cake.quantity} kg</span>
                         </div>
                         <div className="text-sm text-yellow-600 space-y-1">
-                          <p>⏰ {recommendations.organic_manure.neem_cake.timing}</p>
-                          <p>📝 {recommendations.organic_manure.neem_cake.method}</p>
-                          <p>✨ {recommendations.organic_manure.neem_cake.benefits}</p>
+                          <p>⏰ {t.organicManure.timing}</p>
+                          <p>📝 {t.organicManure.method}</p>
+                          <p>✨ {t.organicManure.benefits}</p>
                         </div>
                       </div>
                     </div>

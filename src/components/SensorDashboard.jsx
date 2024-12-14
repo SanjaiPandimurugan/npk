@@ -128,7 +128,7 @@ const SensorDashboard = () => {
         <SensorCard
           title={sensorTranslations.phosphorous?.title}
           value={latestValues.phosphorus}
-          unit={sensorTranslations.phosphorous?.unit}
+          unit="%"
           icon={<FlaskConical size={24} className="text-blue-500" />}
           color="blue"
           timestamp={latestValues.timestamp}

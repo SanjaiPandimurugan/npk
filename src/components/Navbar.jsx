@@ -13,10 +13,10 @@ const Navbar = () => {
   const languages = [
     { code: 'english', label: 'English', flag: '🇬🇧' },
     { code: 'tamil', label: 'தமிழ்', flag: '🇮🇳' },
-    { code: 'hindi', label: 'हिंदी', flag: '🇮🇳' },
-    { code: 'punjabi', label: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
-    { code: 'gujarati', label: 'ગુજરાતી', flag: '🇮🇳' },
-    { code: 'haryanvi', label: 'हरियाणवी', flag: '🇮🇳' }
+    { code: 'hindi', label: 'hindi', flag: '🇮🇳' },
+    { code: 'punjabi', label: 'punjabi', flag: '🇮🇳' },
+    { code: 'gujarati', label: 'gujarati', flag: '🇮🇳' },
+    { code: 'haryanvi', label: 'haryanvi', flag: '🇮🇳' }
   ];
 
   const handleLanguageChange = (langCode) => {

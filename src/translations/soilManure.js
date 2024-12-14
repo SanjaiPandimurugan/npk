@@ -25,10 +25,11 @@ const soilManureTranslations = {
       vermicompost: "Vermicompost",
       neemCake: "Neem Cake",
       quantity: "Quantity",
-      timing: "Timing",
-      method: "Method",
-      benefits: "Benefits",
-      currentNPKBasedRecommendation: "Current NPK Based Recommendation"
+      timing: "Apply before planting/sowing",
+      method: "Broadcast and incorporate into soil",
+      benefits: "Improves soil structure and nutrient content",
+      currentNPKBasedRecommendation: "Current NPK Based Recommendation",
+      npkRecommendationHeading: "NPK Based Organic Manure Recommendation"
     },
     recommendations: {
       title: "Recommendations",
@@ -72,21 +73,6 @@ const soilManureTranslations = {
         duringSowing: "During Sowing",
         postSowing: "Post-Sowing Application",
         followUp: "Follow-up Applications"
-      },
-      timing: {
-        beforePlanting: "Apply 2-3 weeks before planting",
-        duringPrep: "Apply during land preparation",
-        mixSoil: "Mix with soil in planting rows/beds"
-      },
-      methods: {
-        mixRows: "Mix with soil in planting rows/beds",
-        broadcast: "Broadcast and incorporate into soil",
-        evenSpread: "Spread evenly and mix with soil"
-      },
-      benefits: {
-        nutrients: "Rich in nutrients and beneficial microorganisms",
-        soilStructure: "Improves soil structure and nutrient content",
-        pestControl: "Natural pest repellent and soil enricher"
       }
     }
   },
@@ -110,16 +96,17 @@ const soilManureTranslations = {
       additionalNutrients: "கூடுதல் ஊட்டச்சத்துக்கள்"
     },
     organicManure: {
-      title: "கரிம உர பயன்பாடு",
+      title: "கயற்கை உர பயன்பாடு",
       currentRecommendation: "தற்போதைய NPK அடிப்படையிலான பரிந்துரை",
-      fym: "பண்ணை உரம்",
+      fym: "தொழு உரம்",
       vermicompost: "மண்புழு உரம்",
       neemCake: "வேப்பம் புண்ணாக்கு",
       quantity: "அளவு",
-      timing: "நேரம்",
-      method: "முறை",
-      benefits: "நன்மைகள்",
-      currentNPKBasedRecommendation: "Current NPK Based Recommendation"
+      timing: "நடவு செய்வதற்கு முன் பயன்படுத்தவும்",
+      method: "மண்ணுடன் கலந்து பரப்பவும்",
+      benefits: "மண் அமைப்பு மற்றும் ஊட்டச்சத்து உள்ளடக்கத்தை மேம்படுத்துகிறது",
+      currentNPKBasedRecommendation: "தற்போதைய NPK அடிப்படையிலான பரிந்துரை",
+      npkRecommendationHeading: "NPK அடிப்படையிலான கயற்கை உர பரிந்துரை"
     },
     results: {
       soilHealth: "மண் ஆரோக்கிய பகுப்பாய்வு",
@@ -159,7 +146,7 @@ const soilManureTranslations = {
       manureSection: {
         title: "கரிம உர பரிந்துரைகள்",
         fym: {
-          name: "பண்ணை உரம்",
+          name: "பொழு உரம்",
           applicationRate: "பயன்படுத்தும் விகிதம்",
           timing: "பயன்படுத்தும் நேரம்",
           method: "பயன்படுத்தும் முறை",
@@ -189,15 +176,6 @@ const soilManureTranslations = {
         duringSowing: "விதைக்கும் போது பயன்படுத்துதல்",
         postSowing: "விதைத்த பின் பயன்படுத்துதல்",
         followUp: "தொடர் பயன்பாடுகள்"
-      },
-      timing: {
-        beforePlanting: "நடவு செய்வதற்கு 2-3 வாரங்களுக்கு முன் பயன்படுத்தவும்"
-      },
-      methods: {
-        mixRows: "நடவு வரிசைகளில் மண்ணுடன் கலக்கவும்"
-      },
-      benefits: {
-        nutrients: "ஊட்டச்சத்துக்கள் மற்றும் பயனுள்ள நுண்ணுயிரிகள் நிறைந்தது"
       }
     }
   },
@@ -206,35 +184,35 @@ const soilManureTranslations = {
     state: "राज्य",
     district: "जिला",
     crop: "फसल",
-    landArea: "भूमि क्षेत्र (हेक्टेयर)",
+    landArea: "भमीन का रकबा (हैक्टेयर)",
     selectState: "राज्य चुणो",
     selectDistrict: "जिला चुणो",
     selectCrop: "फसल चुणो",
-    enterArea: "हेक्टेयर में क्षेत्र दर्ज करें",
-    generating: "उत्पन्न हो रहा है...",
-    generateButton: "सिफारिशें उत्पन्न करें",
+    enterArea: "हैक्टेयर में रकबा भरो",
+    generating: "बण रया है...",
+    generateButton: "सिफारिशां बणाओ",
     npkAnalysis: {
       title: "एनपीके विश्लेषण",
-      currentNPK: "वर्तमान एनपीके अनुपात",
-      soilAnalysis: "मिट्टी विश्लेषण",
-      cropRequirement: "फसल आवश्यकता",
+      currentNPK: "मौजूदा एनपीके अनुपात",
+      soilAnalysis: "माटी विश्लेषण",
+      cropRequirement: "फसल की जरूरत",
       additionalNutrients: "अतिरिक्त पोषक तत्व"
     },
     organicManure: {
-      title: "जैविक खाद अनुप्रयोग",
-      currentRecommendation: "वर्तमान एनपीके आधारित सिफारिश",
+      title: "जैविक खाद का प्रयोग",
+      currentRecommendation: "मौजूदा एनपीके आधारित सिफारिश",
       fym: "गोबर की खाद",
-      vermicompost: "वर्मीकम्पोस्ट",
-      neemCake: "नीम खली",
+      vermicompost: "केंचुए की खाद",
+      neemCake: "नीम की खल्ली",
       quantity: "मात्रा",
-      timing: "समय",
-      method: "विधि",
-      benefits: "लाभ",
+      timing: "टाइम",
+      method: "तरीका",
+      benefits: "फायदे",
       currentNPKBasedRecommendation: "Current NPK Based Recommendation"
     },
     results: {
       soilHealth: "जमीन स्वास्थ्य विश्लेषण",
-      currentSoilStatus: "वर्तमान जमीन स्थिति",
+      currentSoilStatus: "मौजूदा जमीन स्थिति",
       recommendations: "सिफारिशें",
       applicationSchedule: "अनुप्रयोग अट्टवरी",
       soilParameters: {
@@ -247,28 +225,28 @@ const soilManureTranslations = {
       status: {
         low: "कम",
         medium: "मध्यम",
-        high: "उधिक",
-        optimal: "उत्कृष्ट"
+        high: "उत्तर्वां",
+        optimal: "उत्कृत"
       },
       schedule: {
         beforeSowing: "बाद बोयारी",
-        duringSowing: "बोयारी के दौरान",
-        afterSowing: "बोयारी के बाद",
+        duringSowing: "बोयारी दारान",
+        afterSowing: "बोयारी दावान",
         quantity: "मात्रा",
         method: "अनुप्रयोग विधि"
       }
     },
     recommendations: {
-      title: "सिफारिशें",
+      title: "सिफारिशां",
       npkSection: {
-        title: "एनपीके विश्लेषण परिणाम",
-        currentRatio: "वर्तमान एनपीके अनुपात",
-        requiredRatio: "आवश्यक एनपीके अनुपात",
+        title: "एनपीके विश्लेषण नतीजे",
+        currentRatio: "मौजूदा एनपीके अनुपात",
+        requiredRatio: "जरूरी एनपीके अनुपात",
         deficiency: "पोषक तत्वां की कमी",
         excess: "पोषक तत्वां की ज्यादा मात्रा"
       },
       manureSection: {
-        title: "जैविक खाद सिफारिशें",
+        title: "जैविक खाद सिफारिशां",
         fym: {
           name: "गोबर की खाद",
           applicationRate: "प्रयोग की दर",
@@ -278,7 +256,7 @@ const soilManureTranslations = {
           precautions: "सावधानियां"
         },
         vermicompost: {
-          name: "वर्मीकम्पोस्ट",
+          name: "केंचुए की खाद",
           applicationRate: "प्रयोग की दर",
           timing: "प्रयोग का टाइम",
           method: "प्रयोग का तरीका",
@@ -286,7 +264,7 @@ const soilManureTranslations = {
           precautions: "सावधानियां"
         },
         neemCake: {
-          name: "नीम खली",
+          name: "नीम की खल्ली",
           applicationRate: "प्रयोग की दर",
           timing: "प्रयोग का टाइम",
           method: "प्रयोग का तरीका",
@@ -300,15 +278,6 @@ const soilManureTranslations = {
         duringSowing: "बोवाई के टाइम",
         postSowing: "बोवाई के बाद",
         followUp: "बाद का प्रयोग"
-      },
-      timing: {
-        beforePlanting: "रोपण से 2-3 सप्ताह पहले डालें"
-      },
-      methods: {
-        mixRows: "रोपण पंक्तियों में मिट्टी के साथ मिलाएं"
-      },
-      benefits: {
-        nutrients: "पोषक तत्वों और लाभकारी सूक्ष्मजीवों से भरपूर"
       }
     }
   },
@@ -332,14 +301,14 @@ const soilManureTranslations = {
       additionalNutrients: "ਵਾਧੂ ਪੋਸ਼ਕ ਤੱਤ"
     },
     organicManure: {
-      title: "ਜੈਵਿਕ ਖਾਦ ਐਪ્ਲੀਕੇਸ਼ਨ",
+      title: "ਜੈਵਿਕ ਖਾਦ ਐਪ્લિકેશન",
       currentRecommendation: "ਮੌਜੂਦਾ ਐਨਪੀਕੇ ਆਧਾਰਿਤ ਸਿਫਾਰਸ਼",
       fym: "ਫਾਰਮ ਯਾਰਡ ਖਾਦ",
       vermicompost: "ਵਰਮੀਕੰਪੋਸਟ",
       neemCake: "ਨੀਮ ਕੇਕ",
       quantity: "ਮਾਤਰਾ",
-      timing: "ਸਮਾਂ",
-      method: "ਵਿਧੀ",
+      timing: "ਰੋਪਣ ਤੋਂ 2-3 ਸਪਤਾਹ ਪਹਿਲਾਂ ਡਾਲੋ",
+      method: "ਰੋਪਣ ਪੰਕਤਿਯੋਂ ਮਿਲਾਉਣ",
       benefits: "ਲਾਭ",
       currentNPKBasedRecommendation: "Current NPK Based Recommendation"
     },
@@ -347,12 +316,12 @@ const soilManureTranslations = {
       soilHealth: "ਜਮੀਨ ਸਿਹਤ ਵਿਸ਼ਲੇਸ਼ਣ",
       currentSoilStatus: "ਮੌਜੂਦਾ ਜਮੀਨ ਸਥਿਤੀ",
       recommendations: "ਸਿਫਾਰਸ਼ਾਂ",
-      applicationSchedule: "ਅਨੁਪਰਯੋਗ ਅਟਟਵਰੀ",
+      applicationSchedule: "ਅਨੁਪਰਯੋਗ ਅਟਟਵਰી",
       soilParameters: {
         nitrogen: "ਨਾਇਟ੍ਰੋਜਨ",
         phosphorus: "ਫੋਸਫੋਰਸ",
-        potassium: "ਪੋਟਾਸੀਮ",
-        ph: "ਅਮਲ-ਕ੍ਰਾਰ ਸਿਲਾਂ",
+        potassium: "ਪੋਟ��ਸੀਮ",
+        ph: "ਅਮਲ-ਕ੍ਰાਰ ਸਿਲਾਂ",
         moisture: "ਆਯਤਨ"
       },
       status: {
@@ -374,7 +343,7 @@ const soilManureTranslations = {
       npkSection: {
         title: "ਐਨਪੀਕੇ ਵਿਸ਼ਲੇਸ਼ਣ ਨਤੀਜੇ",
         currentRatio: "ਮੌਜੂਦਾ ਐਨਪੀਕੇ ਅਨੁਪਾਤ",
-        requiredRatio: "ਲੋੜੀਂਦਾ ਐਨਪੀਕੇ ਅਨੁਪਾਤ",
+        requiredRatio: "ਲੋੜੀਂਦਾ ਐਨਪੀਕੇ ਅਨੁਪਾਤਤ",
         deficiency: "ਪੋਸ਼ਕ ਤੱਤਾਂ ਦੀ ਕਮੀ",
         excess: "ਪੋਸ਼ਕ ਤੱਤਾਂ ਦੀ ਵਾਧੂ ਮਾतਰਾ"
       },
@@ -407,19 +376,10 @@ const soilManureTranslations = {
       },
       applicationSchedule: {
         title: "ਵਰਤੋਂ ਸਮਾਂ-ਸਾਰਣੀ",
-        preSowing: "ਬੀਜਣ ਤੋਂ ਪਹਿਲਾਂ",
-        duringSowing: "ਬੀਜਣ ਦੌਰਾਨन",
-        postSowing: "ਬੀਜਣ ਤੋਂ ਬਾਅਦ",
+        preSowing: "ਬੀਜਣ ਤੋਂ ਪਹਿਲਾ",
+        duringSowing: "ਬીਜਣ ਦੌਰਾਨ",
+        postSowing: "ਬીਜਣ ਤੋਂ ਬਾਅਦ",
         followUp: "ਅਨੁਵਰਤੀ ਵਰਤੋਂ"
-      },
-      timing: {
-        beforePlanting: "ਰੋਪਣ ਤੋਂ 2-3 ਸਾਲ ਪਹਿਲਾਂ ਡਾਲੋ"
-      },
-      methods: {
-        mixRows: "ਰੋਪਣ ਪੰਕਤੀਆਂ ਵਿਵਾਗਤ ਮਿਲਾਉਣ"
-      },
-      benefits: {
-        nutrients: "ਪੋਸ਼ਕ ਤੱਤਾਂ ਅਤੇ ਲਾਭਕਾਰੀ ਸੂਕਾਰੀ ਜਿਵਤਾਂ ਨਿਰਮਾਤਾ"
       }
     }
   },
@@ -443,16 +403,17 @@ const soilManureTranslations = {
       additionalNutrients: "વધારાના પોષક તત્વો"
     },
     organicManure: {
-      title: "જૈવિક ખાતર એપ્લિકેશન",
-      currentRecommendation: "વર્તમાન એનપીકે આધારિત ભલામણ",
-      fym: "ફાર્મ યાર્ડ ખાતર",
-      vermicompost: "વર્મીકમ્પોસ્ટ",
+      title: "જૈવિક ખાતર એો ઉપયોગ",
+      currentRecommendation: "વર્તમાન NPK આધારિત ભલામણ",
+      fym: "છાણિયું ખાતર",
+      vermicompost: "અળસીયાનું ખાતર", 
       neemCake: "લીમડાનો ખોળ",
       quantity: "જથ્થો",
-      timing: "સમય",
-      method: "પદ્ધતિ",
-      benefits: "લાભો",
-      currentNPKBasedRecommendation: "Current NPK Based Recommendation"
+      timing: "વાવણી પહેલાં ઉમેરો",
+      method: "જમીનમાં ભેળવીને છાંટો",
+      benefits: "જમીનની રચના અને પોષક તત્વોમાં સુધારો કરે છે",
+      currentNPKBasedRecommendation: "વર્તમાન NPK આધારિત ભલામણ",
+      npkRecommendationHeading: "NPK આધારિત જૈવિક ખાતર ની ભલામણ"
     },
     results: {
       soilHealth: "જમીન સ્વાસ્થ્ય વિશ્લેષણ",
@@ -484,7 +445,7 @@ const soilManureTranslations = {
       title: "સિફારસાં",
       npkSection: {
         title: "એનપીકે વિશ્લેષણ નਤੀજੇ",
-        currentRatio: "મੌજੂદા એનપીકે અનੁપાત",
+        currentRatio: "મੌજੂદਾ એનપીકે અનੁપાત",
         requiredRatio: "લੋજੀંદા એનપીકે અનੁપાત",
         deficiency: "પોષક તત્વાં કેટલી કમી",
         excess: "પોષક તત્વાં જ્યાદા માત્રા"
@@ -518,19 +479,10 @@ const soilManureTranslations = {
       },
       applicationSchedule: {
         title: "વર્તમાન સમય-સારણੀ",
-        preSowing: "બીજણ તੋં પહીલા",
+        preSowing: "બીજણ તੋં ਪહીલા",
         duringSowing: "બીજણ દારાન",
         postSowing: "બીજણ તੋં બાઅદ",
         followUp: "અનુવર્તੀ વર્તમાન"
-      },
-      timing: {
-        beforePlanting: "રੋપણ તੋં 2-3 વર્ષ પહીલા ડાલੋ"
-      },
-      methods: {
-        mixRows: "રੋપણ પંકતੀઆં વિવાગ੍ત મિલાઉણ"
-      },
-      benefits: {
-        nutrients: "પੋસ઼੍ક તત્વਾં અતੇ લાભકારੀ સੂક੍ષ੍મજੀવੋં નਿરਮાત੍તા"
       }
     }
   },
@@ -633,15 +585,6 @@ const soilManureTranslations = {
         duringSowing: "बोवाई के टाइम",
         postSowing: "बोवाई के बाद",
         followUp: "बाद का प्रयोग"
-      },
-      timing: {
-        beforePlanting: "रोपण से 2-3 सप्ताह पहले डालें"
-      },
-      methods: {
-        mixRows: "रोपण पंक्तियों में मिट्टी के साथ मिलाएं"
-      },
-      benefits: {
-        nutrients: "पोषक तत्वों और लाभकारी सूक्ष्मजीवों से भरपूर"
       }
     }
   }
