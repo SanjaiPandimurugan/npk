@@ -46,6 +46,11 @@ const SoilManureRecommendation = () => {
     pH: 0,
     moisture: 0
   });
+  const [latestValues, setLatestValues] = useState({
+    nitrogen: 0,
+    phosphorus: 0,
+    potassium: 0
+  });
 
   const states = Object.keys(soilDatabase);
 
@@ -205,6 +210,24 @@ const SoilManureRecommendation = () => {
     </div>
   );
 
+  useEffect(() => {
+    const sensorRef = collection(db, 'sensor_data');
+    const q = query(sensorRef, orderBy('timestamp', 'desc'), limit(1));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs[0].data();
+        setLatestValues({
+          nitrogen: data.nitrogen || 0,
+          phosphorus: data.phosphorus || 0,
+          potassium: data.potassium || 0
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
       <div className="container mx-auto px-4 py-12">
@@ -350,7 +373,7 @@ const SoilManureRecommendation = () => {
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-semibold text-green-800">{t.npkAnalysis.currentNPK}</span>
                       <span className="text-2xl font-bold text-green-700">
-                        {`${sensorValues.nitrogen || 0}:${sensorValues.phosphorus || 0}:${sensorValues.potassium || 0}`}
+                        {`${Math.round((latestValues.nitrogen * 100) / 10)}:${Math.round((latestValues.phosphorus * 100) / 10)}:${((latestValues.potassium) * 100) / 10}`}
                       </span>
                     </div>
                   </div>
@@ -389,7 +412,7 @@ const SoilManureRecommendation = () => {
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-green-700">{t.organicManure.quantity}</span>
-                        <span className="font-bold text-green-900">{recommendations.organic_manure.vermicompost.quantity} kg</span>
+                        <span className="font-bold text-green-900">0 kg</span>
                       </div>
                       <div className="text-sm text-green-600 space-y-1">
                         <p>⏰ {t.organicManure.timing}</p>

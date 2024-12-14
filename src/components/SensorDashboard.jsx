@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Leaf, Droplets, Zap, FlaskConical, Waves } from 'lucide-react';
 import SensorCard from './SensorCard';
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, query, orderBy, limit, getDocs } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
 import { useLanguage } from '../contexts/LanguageContext';
 import translations from '../translations';
 
@@ -20,7 +19,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
 const SensorDashboard = () => {
@@ -28,17 +26,15 @@ const SensorDashboard = () => {
   const t = translations[currentLanguage];
 
   const [latestValues, setLatestValues] = useState({
-    ph: '--',
-    moisture: '--',
-    nitrogen: '--',
-    phosphorus: '--',
-    potassium: '--',
-    timestamp: null
+    nitrogen: 0,
+    phosphorus: 0,
+    potassium: 0
   });
 
-  const saveSensorDataToMongo = async (data) => {
+  // Function to save sensor data to MongoDB
+  const saveSensorData = async (data) => {
     try {
-      await fetch('http://localhost:5000/api/sensor-data', {
+      const response = await fetch('http://localhost:5000/api/sensor-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,26 +47,30 @@ const SensorDashboard = () => {
           moisture: parseFloat(data.moisture) || 0
         })
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to save sensor data');
+      }
+
+      console.log('Sensor data saved to MongoDB');
     } catch (error) {
-      console.error('Error saving to MongoDB:', error);
+      console.error('Error saving sensor data:', error);
     }
   };
 
-  const fetchLatestData = async () => {
-    try {
-      const q = query(
-        collection(db, 'sensor_data'),
-        orderBy('timestamp', 'desc'),
-        limit(1)
-      );
+  useEffect(() => {
+    // Subscribe to Firebase real-time updates
+    const q = query(
+      collection(db, 'sensor_data'),
+      orderBy('timestamp', 'desc'),
+      limit(1)
+    );
 
-      const querySnapshot = await getDocs(q);
-
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
       if (!querySnapshot.empty) {
         const doc = querySnapshot.docs[0];
         const data = doc.data();
-        console.log('Fetched data:', data);
-
+        
         setLatestValues({
           ph: data.ph || '--',
           moisture: data.moisture || '--',
@@ -80,26 +80,12 @@ const SensorDashboard = () => {
           timestamp: data.timestamp
         });
 
-        // Save to MongoDB
-        await saveSensorDataToMongo(data);
+        // Save to MongoDB when new data arrives
+        saveSensorData(data);
       }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setLatestValues(prev => ({
-        ...prev,
-        ph: '--',
-        moisture: '--',
-        nitrogen: '--',
-        phosphorus: '--',
-        potassium: '--'
-      }));
-    }
-  };
+    });
 
-  useEffect(() => {
-    fetchLatestData();
-    const interval = setInterval(fetchLatestData, 5000);
-    return () => clearInterval(interval);
+    return () => unsubscribe();
   }, []);
 
   // Get sensor translations
@@ -117,8 +103,8 @@ const SensorDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <SensorCard
           title={sensorTranslations.nitrogen?.title}
-          value={latestValues.nitrogen}
-          unit={sensorTranslations.nitrogen?.unit}
+          value={(latestValues.nitrogen)*100}
+          unit="%"
           icon={<Leaf size={24} className="text-emerald-500" />}
           color="emerald"
           timestamp={latestValues.timestamp}
@@ -127,7 +113,7 @@ const SensorDashboard = () => {
         />
         <SensorCard
           title={sensorTranslations.phosphorous?.title}
-          value={latestValues.phosphorus}
+          value={(latestValues.phosphorus)*100}
           unit="%"
           icon={<FlaskConical size={24} className="text-blue-500" />}
           color="blue"
@@ -137,8 +123,8 @@ const SensorDashboard = () => {
         />
         <SensorCard
           title={sensorTranslations.potassium?.title}
-          value={latestValues.potassium}
-          unit={sensorTranslations.potassium?.unit}
+          value={((latestValues.potassium)*100).toFixed(1)}
+          unit="%"
           icon={<Zap size={24} className="text-amber-500" />}
           color="amber"
           timestamp={latestValues.timestamp}
