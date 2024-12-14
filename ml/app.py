@@ -1,61 +1,85 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import pandas as pd
-from train_model import ManurePredictor
+import logging
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:5173"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
-# Load the trained model and crop data
-predictor = ManurePredictor.load_models('manure_predictor.joblib')
-crop_data = pd.read_csv('crop_manure_data.csv')
+logging.basicConfig(level=logging.DEBUG)
 
-@app.route('/predict', methods=['POST'])
+# Add sensor data endpoint
+@app.route('/api/sensor-data', methods=['GET', 'POST', 'OPTIONS'])
+def sensor_data():
+    if request.method == 'OPTIONS':
+        return jsonify({}), 200
+    
+    try:
+        if request.method == 'POST':
+            data = request.json
+            app.logger.info(f"Received sensor data: {data}")
+            return jsonify({'message': 'Data received successfully'}), 200
+        else:
+            # Return mock sensor data for GET requests
+            return jsonify({
+                'nitrogen': 50,
+                'phosphorus': 40,
+                'potassium': 30,
+                'pH': 6.5,
+                'moisture': 60
+            })
+    except Exception as e:
+        app.logger.error(f"Error handling sensor data: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/predict', methods=['POST', 'OPTIONS'])
 def predict():
+    if request.method == 'OPTIONS':
+        return jsonify({}), 200
+        
     try:
         data = request.json
-        if not data or 'cropName' not in data:
-            return jsonify({
-                'success': False,
-                'error': 'No crop name provided'
-            }), 400
-            
-        crop_name = data['cropName']
-        if not crop_name:
-            return jsonify({
-                'success': False,
-                'error': 'Crop name cannot be empty'
-            }), 400
+        app.logger.info(f"Received data: {data}")
         
-        # Find the crop in the database
-        crop_info = crop_data[crop_data['Crop_Name'].str.lower() == crop_name.lower()]
+        current_npk = data.get('current_npk', {})
+        crop_requirements = data.get('crop_requirements', {})
+        land_area = float(data.get('land_area', 1.0))
         
-        if crop_info.empty:
-            return jsonify({
-                'success': False,
-                'error': f'Crop {crop_name} not found in database'
-            }), 400
-            
-        crop_info = crop_info.iloc[0]  # Get the first matching row
+        current_n = float(current_npk.get('n', 0))
+        current_p = float(current_npk.get('p', 0))
+        current_k = float(current_npk.get('k', 0))
         
-        # Get predictions directly from the CSV data
-        predictions = {
-            'fym': int(crop_info['FYM_kg']),
-            'vermicompost': int(crop_info['Vermicompost_kg']),
-            'neem_cake': int(crop_info['Neem_Cake_kg']),
-            'npk_ratio': crop_info['NPK_Ratio']
+        required_n = float(crop_requirements.get('n', 0))
+        required_p = float(crop_requirements.get('p', 0))
+        required_k = float(crop_requirements.get('k', 0))
+        
+        n_deficit = max(0, required_n - current_n)
+        p_deficit = max(0, required_p - current_p)
+        k_deficit = max(0, required_k - current_k)
+        
+        fym_quantity = round((n_deficit * 15 + p_deficit * 10 + k_deficit * 5) * land_area)
+        vermicompost_quantity = round((n_deficit * 10 + p_deficit * 15 + k_deficit * 8) * land_area)
+        neem_cake_quantity = round((n_deficit * 5 + p_deficit * 5 + k_deficit * 15) * land_area)
+        
+        response_data = {
+            'predictions': {
+                'fym_quantity': fym_quantity,
+                'vermicompost_quantity': vermicompost_quantity,
+                'neem_cake_quantity': neem_cake_quantity
+            }
         }
         
-        return jsonify({
-            'success': True,
-            'predictions': predictions
-        })
+        app.logger.info(f"Sending response: {response_data}")
+        return jsonify(response_data)
         
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 400
+        app.logger.error(f"Error processing request: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000) 
+    app.run(port=5000, debug=True) 

@@ -46,11 +46,6 @@ const SoilManureRecommendation = () => {
     pH: 0,
     moisture: 0
   });
-  const [latestValues, setLatestValues] = useState({
-    nitrogen: 0,
-    phosphorus: 0,
-    potassium: 0
-  });
 
   const states = Object.keys(soilDatabase);
 
@@ -78,74 +73,61 @@ const SoilManureRecommendation = () => {
     setError(null);
 
     try {
-      // Get soil NPK values from soilDatabase
-      const districtData = soilDatabase[state].districts[district];
-      const soilNPKRatio = districtData.nutrients.n_content; // This contains ratio like "6:1:7"
+      const currentNPK = {
+        n: Math.round((sensorValues.nitrogen * 100) / 10),
+        p: Math.round((sensorValues.phosphorus * 100) / 10),
+        k: Math.round((sensorValues.potassium * 100) / 10)
+      };
 
-      // Get crop NPK requirements from cropDatabase
       const cropData = cropDatabase[selectedCrop];
-      const cropNPK = cropData.npk_ratio;
-      const cropRatio = `${cropNPK.n}:${cropNPK.p}:${cropNPK.k}`;
+      const cropRequirements = {
+        n: cropData.npk_ratio.n,
+        p: cropData.npk_ratio.p,
+        k: cropData.npk_ratio.k
+      };
 
-      // Parse the soil NPK ratio
-      const [soilN, soilP, soilK] = soilNPKRatio.split(':').map(Number);
+      // Get ML predictions
+      const mlResponse = await getMLPrediction(currentNPK, cropRequirements);
       
-      // Calculate the deficit ratio
-      const deficitN = Math.max(0, cropNPK.n - soilN);
-      const deficitP = Math.max(0, cropNPK.p - soilP);
-      const deficitK = Math.max(0, cropNPK.k - soilK);
-      const deficitRatio = `${deficitN}:${deficitP}:${deficitK}`;
-
-      // Calculate fertilizer recommendations
-      const fertilizerRecs = calculateFertilizerRecommendation(
-        selectedCrop, 
-        districtData, 
-        parseFloat(landArea)
-      );
-
-      setRecommendations({
-        cropName: selectedCrop,
-        organic_manure: {
-          fym: {
-            quantity: fertilizerRecs.organic.fym,
-            timing: "Apply before planting/sowing",
-            method: "Broadcast and incorporate into soil",
-            benefits: "Improves soil structure and nutrient content"
-          },
-          vermicompost: {
-            quantity: fertilizerRecs.organic.vermicompost,
-            timing: "Apply 2-3 weeks before planting",
-            method: "Mix with soil in planting rows/beds",
-            benefits: "Rich in nutrients and beneficial microorganisms"
-          },
-          neem_cake: {
-            quantity: fertilizerRecs.organic.neem_cake,
-            timing: "Apply during land preparation",
-            method: "Spread evenly and mix with soil",
-            benefits: "Natural pest repellent and soil enricher"
+      if (mlResponse && mlResponse.predictions) {
+        setRecommendations({
+          ...recommendations,
+          organic_manure: {
+            fym: {
+              quantity: mlResponse.predictions.fym_quantity,
+              timing: "Apply before planting/sowing",
+              method: "Broadcast and incorporate into soil",
+              benefits: "Improves soil structure and nutrient content"
+            },
+            vermicompost: {
+              quantity: mlResponse.predictions.vermicompost_quantity,
+              timing: "Apply 2-3 weeks before planting",
+              method: "Mix with soil in planting rows/beds",
+              benefits: "Rich in nutrients and beneficial microorganisms"
+            },
+            neem_cake: {
+              quantity: mlResponse.predictions.neem_cake_quantity,
+              timing: "Apply during land preparation",
+              method: "Spread evenly and mix with soil",
+              benefits: "Natural pest repellent and soil enricher"
+            }
           }
-        },
-        npk_analysis: {
-          soil: soilNPKRatio,        // Using the ratio directly from database
-          crop: cropRatio,           // Crop requirement ratio
-          deficit: deficitRatio      // Calculated deficit ratio
-        }
-      });
-
+        });
+      }
     } catch (err) {
       setError(err.message);
-      setRecommendations(null);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    const fetchSensorData = async () => {
-      try {
-        const response = await fetch('/api/sensor-data/latest');
-        const data = await response.json();
-        
+    const sensorRef = collection(db, 'sensor_data');
+    const q = query(sensorRef, orderBy('timestamp', 'desc'), limit(1));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs[0].data();
         setSensorValues({
           nitrogen: data.nitrogen || 0,
           phosphorus: data.phosphorus || 0,
@@ -153,18 +135,10 @@ const SoilManureRecommendation = () => {
           pH: data.pH || 0,
           moisture: data.moisture || 0
         });
-      } catch (error) {
-        console.error("Error fetching sensor data:", error);
       }
-    };
+    });
 
-    // Fetch initial data
-    fetchSensorData();
-
-    // Set up polling every 5 seconds
-    const interval = setInterval(fetchSensorData, 5000);
-
-    return () => clearInterval(interval);
+    return () => unsubscribe();
   }, []);
 
   // Add error handling for Firebase connection
@@ -210,23 +184,36 @@ const SoilManureRecommendation = () => {
     </div>
   );
 
-  useEffect(() => {
-    const sensorRef = collection(db, 'sensor_data');
-    const q = query(sensorRef, orderBy('timestamp', 'desc'), limit(1));
+  const getMLPrediction = async (currentNPK, cropRequirements) => {
+    try {
+      console.log('Sending data:', { currentNPK, cropRequirements }); // Debug log
+      
+      const response = await fetch('http://localhost:5000/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          current_npk: currentNPK,
+          crop_requirements: cropRequirements,
+          soil_type: soilDatabase[state]?.districts[district]?.soil_types[0],
+          crop: selectedCrop,
+          land_area: parseFloat(landArea)
+        })
+      });
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (!snapshot.empty) {
-        const data = snapshot.docs[0].data();
-        setLatestValues({
-          nitrogen: data.nitrogen || 0,
-          phosphorus: data.phosphorus || 0,
-          potassium: data.potassium || 0
-        });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    });
 
-    return () => unsubscribe();
-  }, []);
+      const data = await response.json();
+      console.log('ML Response:', data); // Debug log
+      return data;
+    } catch (error) {
+      console.error('ML API Error:', error);
+      return null;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
@@ -373,7 +360,7 @@ const SoilManureRecommendation = () => {
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-semibold text-green-800">{t.npkAnalysis.currentNPK}</span>
                       <span className="text-2xl font-bold text-green-700">
-                        {`${Math.round((latestValues.nitrogen * 100) / 10)}:${Math.round((latestValues.phosphorus * 100) / 10)}:${((latestValues.potassium) * 100) / 10}`}
+                        {`${Math.round((sensorValues.nitrogen * 100) / 10)}:${Math.round((sensorValues.phosphorus * 100) / 10)}:${((sensorValues.potassium) * 100) / 10}`}
                       </span>
                     </div>
                   </div>
