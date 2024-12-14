@@ -141,17 +141,6 @@ const SensorDashboard = () => {
           optimal={sensorTranslations.ph?.optimal}
           status={sensorTranslations.ph?.status}
         />
-        <SensorCard
-          title={sensorTranslations.moisture?.title}
-          value={latestValues.moisture}
-          unit={sensorTranslations.moisture?.unit}
-          icon={<Waves size={24} className="text-cyan-500" />}
-          color="cyan"
-          timestamp={latestValues.timestamp}
-          optimal={sensorTranslations.moisture?.optimal}
-          status={sensorTranslations.moisture?.status}
-          range={{ min: 30, max: 60, optimal: 45 }}
-        />
       </div>
     </div>
   );
