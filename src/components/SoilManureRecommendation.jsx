@@ -6,6 +6,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, orderBy, limit, onSnapshot, getDocs, enableIndexedDbPersistence } from 'firebase/firestore';
 import { useLanguage } from '../contexts/LanguageContext';
 import soilManureTranslations from '../translations/soilManure';
+import ManurePrediction from './ManurePrediction';
 
 // Use the same Firebase config
 const firebaseConfig = {
@@ -46,6 +47,12 @@ const SoilManureRecommendation = () => {
     pH: 0,
     moisture: 0
   });
+  const [latestValues, setLatestValues] = useState({
+    nitrogen: 0,
+    phosphorus: 0,
+    potassium: 0
+  });
+  const [manurePredictions, setManurePredictions] = useState(null);
 
   const states = Object.keys(soilDatabase);
 
@@ -73,61 +80,74 @@ const SoilManureRecommendation = () => {
     setError(null);
 
     try {
-      const currentNPK = {
-        n: Math.round((sensorValues.nitrogen * 100) / 10),
-        p: Math.round((sensorValues.phosphorus * 100) / 10),
-        k: Math.round((sensorValues.potassium * 100) / 10)
-      };
+      // Get soil NPK values from soilDatabase
+      const districtData = soilDatabase[state].districts[district];
+      const soilNPKRatio = districtData.nutrients.n_content; // This contains ratio like "6:1:7"
 
+      // Get crop NPK requirements from cropDatabase
       const cropData = cropDatabase[selectedCrop];
-      const cropRequirements = {
-        n: cropData.npk_ratio.n,
-        p: cropData.npk_ratio.p,
-        k: cropData.npk_ratio.k
-      };
+      const cropNPK = cropData.npk_ratio;
+      const cropRatio = `${cropNPK.n}:${cropNPK.p}:${cropNPK.k}`;
 
-      // Get ML predictions
-      const mlResponse = await getMLPrediction(currentNPK, cropRequirements);
+      // Parse the soil NPK ratio
+      const [soilN, soilP, soilK] = soilNPKRatio.split(':').map(Number);
       
-      if (mlResponse && mlResponse.predictions) {
-        setRecommendations({
-          ...recommendations,
-          organic_manure: {
-            fym: {
-              quantity: mlResponse.predictions.fym_quantity,
-              timing: "Apply before planting/sowing",
-              method: "Broadcast and incorporate into soil",
-              benefits: "Improves soil structure and nutrient content"
-            },
-            vermicompost: {
-              quantity: mlResponse.predictions.vermicompost_quantity,
-              timing: "Apply 2-3 weeks before planting",
-              method: "Mix with soil in planting rows/beds",
-              benefits: "Rich in nutrients and beneficial microorganisms"
-            },
-            neem_cake: {
-              quantity: mlResponse.predictions.neem_cake_quantity,
-              timing: "Apply during land preparation",
-              method: "Spread evenly and mix with soil",
-              benefits: "Natural pest repellent and soil enricher"
-            }
+      // Calculate the deficit ratio
+      const deficitN = Math.max(0, cropNPK.n - soilN);
+      const deficitP = Math.max(0, cropNPK.p - soilP);
+      const deficitK = Math.max(0, cropNPK.k - soilK);
+      const deficitRatio = `${deficitN}:${deficitP}:${deficitK}`;
+
+      // Calculate fertilizer recommendations
+      const fertilizerRecs = calculateFertilizerRecommendation(
+        selectedCrop, 
+        districtData, 
+        parseFloat(landArea)
+      );
+
+      setRecommendations({
+        cropName: selectedCrop,
+        organic_manure: {
+          fym: {
+            quantity: fertilizerRecs.organic.fym,
+            timing: "Apply before planting/sowing",
+            method: "Broadcast and incorporate into soil",
+            benefits: "Improves soil structure and nutrient content"
+          },
+          vermicompost: {
+            quantity: fertilizerRecs.organic.vermicompost,
+            timing: "Apply 2-3 weeks before planting",
+            method: "Mix with soil in planting rows/beds",
+            benefits: "Rich in nutrients and beneficial microorganisms"
+          },
+          neem_cake: {
+            quantity: fertilizerRecs.organic.neem_cake,
+            timing: "Apply during land preparation",
+            method: "Spread evenly and mix with soil",
+            benefits: "Natural pest repellent and soil enricher"
           }
-        });
-      }
+        },
+        npk_analysis: {
+          soil: soilNPKRatio,        // Using the ratio directly from database
+          crop: cropRatio,           // Crop requirement ratio
+          deficit: deficitRatio      // Calculated deficit ratio
+        }
+      });
+
     } catch (err) {
       setError(err.message);
+      setRecommendations(null);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    const sensorRef = collection(db, 'sensor_data');
-    const q = query(sensorRef, orderBy('timestamp', 'desc'), limit(1));
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (!snapshot.empty) {
-        const data = snapshot.docs[0].data();
+    const fetchSensorData = async () => {
+      try {
+        const response = await fetch('/api/sensor-data/latest');
+        const data = await response.json();
+        
         setSensorValues({
           nitrogen: data.nitrogen || 0,
           phosphorus: data.phosphorus || 0,
@@ -135,10 +155,18 @@ const SoilManureRecommendation = () => {
           pH: data.pH || 0,
           moisture: data.moisture || 0
         });
+      } catch (error) {
+        console.error("Error fetching sensor data:", error);
       }
-    });
+    };
 
-    return () => unsubscribe();
+    // Fetch initial data
+    fetchSensorData();
+
+    // Set up polling every 5 seconds
+    const interval = setInterval(fetchSensorData, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // Add error handling for Firebase connection
@@ -184,35 +212,26 @@ const SoilManureRecommendation = () => {
     </div>
   );
 
-  const getMLPrediction = async (currentNPK, cropRequirements) => {
-    try {
-      console.log('Sending data:', { currentNPK, cropRequirements }); // Debug log
-      
-      const response = await fetch('http://localhost:5000/predict', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          current_npk: currentNPK,
-          crop_requirements: cropRequirements,
-          soil_type: soilDatabase[state]?.districts[district]?.soil_types[0],
-          crop: selectedCrop,
-          land_area: parseFloat(landArea)
-        })
-      });
+  useEffect(() => {
+    const sensorRef = collection(db, 'sensor_data');
+    const q = query(sensorRef, orderBy('timestamp', 'desc'), limit(1));
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs[0].data();
+        setLatestValues({
+          nitrogen: data.nitrogen || 0,
+          phosphorus: data.phosphorus || 0,
+          potassium: data.potassium || 0
+        });
       }
+    });
 
-      const data = await response.json();
-      console.log('ML Response:', data); // Debug log
-      return data;
-    } catch (error) {
-      console.error('ML API Error:', error);
-      return null;
-    }
+    return () => unsubscribe();
+  }, []);
+
+  const handlePredictionComplete = (predictions) => {
+    setManurePredictions(predictions);
   };
 
   return (
@@ -360,7 +379,7 @@ const SoilManureRecommendation = () => {
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-semibold text-green-800">{t.npkAnalysis.currentNPK}</span>
                       <span className="text-2xl font-bold text-green-700">
-                        {`${Math.round((sensorValues.nitrogen * 100) / 10)}:${Math.round((sensorValues.phosphorus * 100) / 10)}:${((sensorValues.potassium) * 100) / 10}`}
+                        {`${Math.round((latestValues.nitrogen * 100) / 10)}:${Math.round((latestValues.phosphorus * 100) / 10)}:${((latestValues.potassium) * 100) / 10}`}
                       </span>
                     </div>
                   </div>
@@ -388,68 +407,73 @@ const SoilManureRecommendation = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transform transition-all duration-300 hover:shadow-2xl">
                 <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4">
-                  <h3 className="text-xl font-bold text-white">{t.organicManure.recommendationsTitle}</h3>
+                  <h3 className="text-xl font-bold text-white flex items-center">
+                    <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                    </svg>
+                    {t.organicManure.recommendationsTitle}
+                  </h3>
                 </div>
                 <div className="p-6">
-                  <div className="space-y-4">
-                  <div className="bg-gradient-to-r from-green-50 to-white p-4 rounded-xl border border-green-100">
-                    <h4 className="font-semibold text-green-800 mb-2">{t.organicManure.npkRecommendationHeading}</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-green-700">{t.organicManure.quantity}</span>
-                        <span className="font-bold text-green-900">0 kg</span>
-                      </div>
-                      <div className="text-sm text-green-600 space-y-1">
-                        <p>⏰ {t.organicManure.timing}</p>
-                        <p>📝 {t.organicManure.method}</p>
-                        <p>✨ {t.organicManure.benefits}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                    <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
-                      <h4 className="font-semibold text-yellow-800 mb-2">{t.organicManure.fym}</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-yellow-700">{t.organicManure.quantity}</span>
-                          <span className="font-bold text-yellow-900">{recommendations.organic_manure.fym.quantity} Kg</span>
-                        </div>
-                        <div className="text-sm text-yellow-600 space-y-1">
-                          <p>⏰ {t.organicManure.timing}</p>
-                          <p>📝 {t.organicManure.method}</p>
-                          <p>✨ {t.organicManure.benefits}</p>
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-r from-amber-50 to-white p-6 rounded-xl border border-amber-100 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+                      <h4 className="font-semibold text-amber-800 mb-3 flex items-center">
+                        <span className="text-amber-600 mr-2">🌾</span>
+                        {t.organicManure.fym}
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center bg-white/50 p-3 rounded-lg">
+                          <span className="text-amber-700 flex items-center">
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                            </svg>
+                            {t.organicManure.quantity}
+                          </span>
+                          <span className="font-bold text-amber-900 text-lg">
+                            {manurePredictions?.fym || 0} kg
+                          </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
-                      <h4 className="font-semibold text-yellow-800 mb-2">{t.organicManure.vermicompost}</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-yellow-700">{t.organicManure.quantity}</span>
-                          <span className="font-bold text-yellow-900">{recommendations.organic_manure.vermicompost.quantity} kg</span>
-                        </div>
-                        <div className="text-sm text-yellow-600 space-y-1">
-                          <p>⏰ {t.organicManure.timing}</p>
-                          <p>📝 {t.organicManure.method}</p>
-                          <p>✨ {t.organicManure.benefits}</p>
+                    <div className="bg-gradient-to-r from-emerald-50 to-white p-6 rounded-xl border border-emerald-100 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+                      <h4 className="font-semibold text-emerald-800 mb-3 flex items-center">
+                        <span className="text-emerald-600 mr-2">🪱</span>
+                        {t.organicManure.vermicompost}
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center bg-white/50 p-3 rounded-lg">
+                          <span className="text-emerald-700 flex items-center">
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                            </svg>
+                            {t.organicManure.quantity}
+                          </span>
+                          <span className="font-bold text-emerald-900 text-lg">
+                            {manurePredictions?.vermicompost || 0} kg
+                          </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-yellow-50 to-white p-4 rounded-xl border border-yellow-100">
-                      <h4 className="font-semibold text-yellow-800 mb-2">{t.organicManure.neemCake}</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-yellow-700">{t.organicManure.quantity}</span>
-                          <span className="font-bold text-yellow-900">{recommendations.organic_manure.neem_cake.quantity} kg</span>
-                        </div>
-                        <div className="text-sm text-yellow-600 space-y-1">
-                          <p>⏰ {t.organicManure.timing}</p>
-                          <p>📝 {t.organicManure.method}</p>
-                          <p>✨ {t.organicManure.benefits}</p>
+                    <div className="bg-gradient-to-r from-lime-50 to-white p-6 rounded-xl border border-lime-100 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+                      <h4 className="font-semibold text-lime-800 mb-3 flex items-center">
+                        <span className="text-lime-600 mr-2">🌿</span>
+                        {t.organicManure.neemCake}
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center bg-white/50 p-3 rounded-lg">
+                          <span className="text-lime-700 flex items-center">
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                            </svg>
+                            {t.organicManure.quantity}
+                          </span>
+                          <span className="font-bold text-lime-900 text-lg">
+                            {manurePredictions?.neem || 0} kg
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -457,6 +481,11 @@ const SoilManureRecommendation = () => {
                 </div>
               </div>
             </div>
+
+            <ManurePrediction 
+              cropNPKRatio={recommendations.npk_analysis.crop}
+              onPredictionComplete={handlePredictionComplete}
+            />
           </div>
         )}
       </div>
