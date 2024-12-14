@@ -36,6 +36,26 @@ const SensorDashboard = () => {
     timestamp: null
   });
 
+  const saveSensorDataToMongo = async (data) => {
+    try {
+      await fetch('http://localhost:5000/api/sensor-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nitrogen: parseFloat(data.nitrogen) || 0,
+          phosphorus: parseFloat(data.phosphorus) || 0,
+          potassium: parseFloat(data.potassium) || 0,
+          ph: parseFloat(data.ph) || 0,
+          moisture: parseFloat(data.moisture) || 0
+        })
+      });
+    } catch (error) {
+      console.error('Error saving to MongoDB:', error);
+    }
+  };
+
   const fetchLatestData = async () => {
     try {
       const q = query(
@@ -59,6 +79,9 @@ const SensorDashboard = () => {
           potassium: data.potassium || '--',
           timestamp: data.timestamp
         });
+
+        // Save to MongoDB
+        await saveSensorDataToMongo(data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);

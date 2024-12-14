@@ -1,33 +1,58 @@
-import commonTranslations from './common';
 import sensorTranslations from './sensors';
-import calculatorTranslations from './calculator';
 import navbarTranslations from './navbar';
+import soilManureTranslations from './soilManure';
 
-export const translations = {
+const translations = {
   english: {
-    ...commonTranslations.english,
+    brandName: navbarTranslations.english.brandName,
+    home: navbarTranslations.english.home,
+    calculator: navbarTranslations.english.calculator,
     ...sensorTranslations.english,
-    ...calculatorTranslations.english,
-    ...navbarTranslations.english,
+    navbar: navbarTranslations.english,
+    soilManure: soilManureTranslations.english
   },
   tamil: {
-    ...commonTranslations.tamil,
+    brandName: navbarTranslations.tamil.brandName,
+    home: navbarTranslations.tamil.home,
+    calculator: navbarTranslations.tamil.calculator,
     ...sensorTranslations.tamil,
-    ...calculatorTranslations.tamil,
-    ...navbarTranslations.tamil,
+    navbar: navbarTranslations.tamil,
+    soilManure: soilManureTranslations.tamil
   },
   hindi: {
-    ...commonTranslations.hindi,
+    brandName: navbarTranslations.hindi.brandName,
+    home: navbarTranslations.hindi.home,
+    calculator: navbarTranslations.hindi.calculator,
     ...sensorTranslations.hindi,
-    ...calculatorTranslations.hindi,
-    ...navbarTranslations.hindi,
+    navbar: navbarTranslations.hindi,
+    soilManure: soilManureTranslations.hindi
+  },
+  punjabi: {
+    brandName: navbarTranslations.punjabi.brandName,
+    home: navbarTranslations.punjabi.home,
+    calculator: navbarTranslations.punjabi.calculator,
+    ...sensorTranslations.punjabi,
+    navbar: navbarTranslations.punjabi,
+    soilManure: soilManureTranslations.punjabi
+    
+  },
+  gujarati: {
+    brandName: navbarTranslations.gujarati.brandName,
+    home: navbarTranslations.gujarati.home,
+    calculator: navbarTranslations.gujarati.calculator,
+    ...sensorTranslations.gujarati,
+    navbar: navbarTranslations.gujarati,
+    soilManure: soilManureTranslations.gujarati
+    
   },
   haryanvi: {
-    ...commonTranslations.haryanvi,
+    brandName: navbarTranslations.haryanvi.brandName,
+    home: navbarTranslations.haryanvi.home,
+    calculator: navbarTranslations.haryanvi.calculator,
     ...sensorTranslations.haryanvi,
-    ...calculatorTranslations.haryanvi,
-    ...navbarTranslations.haryanvi,
-  },
+    navbar: navbarTranslations.haryanvi,
+    soilManure: soilManureTranslations.haryanvi
+  }
 };
 
 export default translations;  

@@ -2,26 +2,31 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Calculator, Globe } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { translations } from '../translations/index.js';
+import translations from '../translations';
 import logo from '../assets/logo6.png';
 
 const Navbar = () => {
   const location = useLocation();
   const { currentLanguage, setCurrentLanguage } = useLanguage();
-  const t = translations[currentLanguage];
+  const t = translations[currentLanguage] || translations.english;
 
   const languages = [
     { code: 'english', label: 'English', flag: '🇬🇧' },
     { code: 'tamil', label: 'தமிழ்', flag: '🇮🇳' },
     { code: 'hindi', label: 'हिंदी', flag: '🇮🇳' },
+    { code: 'punjabi', label: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
+    { code: 'gujarati', label: 'ગુજરાતી', flag: '🇮🇳' },
     { code: 'haryanvi', label: 'हरियाणवी', flag: '🇮🇳' }
   ];
 
   const handleLanguageChange = (langCode) => {
     setCurrentLanguage(langCode);
-    // Optional: Save to localStorage to persist the choice
     localStorage.setItem('preferredLanguage', langCode);
   };
+
+  if (!t) {
+    return null;
+  }
 
   return (
     <nav className="bg-gradient-to-r from-green-600 to-green-700 shadow-lg fixed w-full z-50">
@@ -30,7 +35,7 @@ const Navbar = () => {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
             <img src={logo} alt="Logo" className="h-10 w-10 rounded-full shadow-md" />
-            <span className="text-white font-semibold text-lg">{t.brandName}</span>
+            <span className="text-white font-semibold text-lg">{t.brandName || 'Smart Agriculture'}</span>
           </div>
 
           {/* Navigation Links and Language Selector */}
@@ -43,7 +48,7 @@ const Navbar = () => {
                   : 'text-green-100 hover:bg-green-700/30'}`}
             >
               <Home size={18} />
-              <span>{t.home}</span>
+              <span>{t.home || 'Home'}</span>
             </Link>
 
             {/* Language Selector Dropdown */}
@@ -92,7 +97,7 @@ const Navbar = () => {
                        text-green-100 hover:bg-green-700/30 transition-colors"
             >
               <Calculator size={18} />
-              <span>{t.calculator}</span>
+              <span>{t.calculator || 'Calculator'}</span>
             </Link>
           </div>
         </div>

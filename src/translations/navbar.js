@@ -1,21 +1,34 @@
 const navbarTranslations = {
   english: {
+    brandName: "Fertile Future",
     home: "Home",
-    dashboard: "Dashboard",
-    calculator: "OM Calculator",
-    settings: "Settings",
-    analysis: "Analysis",
-    brandName: "FertileFuture30",
+    calculator: "Calculator"
   },
   tamil: {
+    brandName: "வளமான எதிர்காலம்",
     home: "முகப்பு",
-    dashboard: "கட்டுப்பாட்டு அறை",
-    calculator: "உர கணிப்பான்",
-    settings: "அமைப்புகள்",
-    analysis: "பகுப்பாய்வு",
-    brandName: "பசுமை எதிர்காலம்30",
+    calculator: "கால்குலேட்டர்"
   },
-  // Add Hindi and Haryanvi translations...
+  hindi: {
+    brandName: "उर्वर भविष्य",
+    home: "होम",
+    calculator: "कैलकुलेटर"
+  },
+  punjabi: {
+    brandName: "ਉਪਜਾਊ ਭਵਿੱਖ",
+    home: "ਹੋਮ",
+    calculator: "ਕੈਲਕੂਲੇਟਰ"
+  },
+  gujarati: {
+    brandName: "ફળદ્રુપ ભવિષ્ય",
+    home: "હોમ",
+    calculator: "કેલ્ક્યુલેટર"
+  },
+  haryanvi: {
+    brandName: "उपजाऊ भविष्य",
+    home: "होम",
+    calculator: "कैलकुलेटर"
+  }
 };
 
 export default navbarTranslations;

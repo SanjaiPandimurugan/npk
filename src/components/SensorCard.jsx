@@ -1,6 +1,11 @@
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
+import translations from '../translations';
 
 const SensorCard = ({ title, value, unit, icon, color, timestamp }) => {
+  const { currentLanguage } = useLanguage();
+  const t = translations[currentLanguage];
+
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return null;
     return new Date(timestamp.seconds * 1000).toLocaleString();
@@ -23,7 +28,7 @@ const SensorCard = ({ title, value, unit, icon, color, timestamp }) => {
               <div className="flex items-center mt-1">
                 <div className={`h-2 w-2 rounded-full ${value === '--' ? 'bg-yellow-400' : 'bg-green-400'} animate-pulse`} />
                 <span className="text-xs text-gray-500 ml-2">
-                  {value === '--' ? 'Updating...' : 'Live reading'}
+                  {value === '--' ? 'Updating...' : t?.sensors?.liveReading}
                 </span>
               </div>
             </div>
@@ -67,14 +72,14 @@ const SensorCard = ({ title, value, unit, icon, color, timestamp }) => {
           <div className={`px-3 py-1 rounded-full text-xs font-medium ${
             value === '--' ? 'bg-gray-100 text-gray-500' : `bg-${color}-50 text-${color}-700`
           }`}>
-            {value === '--' ? 'No reading' : 'Normal range'}
+            {value === '--' ? 'No reading' : t?.sensors?.normalRange}
           </div>
         </div>
       </div>
 
-      {/* Background Decoration */}
-      <div className={`absolute -right-8 -top-8 w-24 h-24 rounded-full bg-${color}-100/20 blur-xl`}></div>
-      <div className={`absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-${color}-100/20 blur-xl`}></div>
+      {/* Decorative Elements */}
+      <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full bg-${color}-100/20 blur-2xl`} />
+      <div className={`absolute -left-6 -bottom-6 w-24 h-24 rounded-full bg-${color}-100/20 blur-2xl`} />
     </div>
   );
 };
