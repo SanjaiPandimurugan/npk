@@ -215,28 +215,6 @@ export const soilDatabase = {
   },
   "Tamil Nadu": {
     districts: {
-      "Ariyalur": {
-        soil_types: ["Red loamy", "Lateritic"],
-        nutrients: {
-          n_content: "3:1:4",
-          n_status: "medium",
-          p_status: "low-medium",
-          k_status: "medium"
-        },
-        deficiencies: ["Zn", "B"],
-        rainfall: "800-900"
-      },
-      "Chengalpattu": {
-        soil_types: ["Coastal alluvial", "Red sandy"],
-        nutrients: {
-          n_content: "7:1:7",
-          n_status: "medium",
-          p_status: "medium",
-          k_status: "medium"
-        },
-        deficiencies: ["Zn"],
-        rainfall: "1000-1200"
-      },
       "Chennai": {
         soil_types: ["Coastal alluvial", "Sandy loam"],
         nutrients: {
@@ -259,28 +237,6 @@ export const soilDatabase = {
         deficiencies: ["Zn", "Fe"],
         rainfall: "600-700"
       },
-      "Cuddalore": {
-        soil_types: ["Coastal alluvial", "Deltaic soils"],
-        nutrients: {
-          n_content: "7:1:8",
-          n_status: "medium",
-          p_status: "medium",
-          k_status: "medium-high"
-        },
-        deficiencies: ["Zn"],
-        rainfall: "1000-1200"
-      },
-      "Dharmapuri": {
-        soil_types: ["Red loamy", "Lateritic soils"],
-        nutrients: {
-          n_content: "6:1:6",
-          n_status: "medium",
-          p_status: "low-medium",
-          k_status: "medium"
-        },
-        deficiencies: ["Zn", "B"],
-        rainfall: "700-900"
-      },
       "Dindigul": {
         soil_types: ["Red soils", "Black soils"],
         nutrients: {
@@ -302,17 +258,6 @@ export const soilDatabase = {
         },
         deficiencies: ["Zn"],
         rainfall: "600-700"
-      },
-      "Kallakurichi": {
-        soil_types: ["Red loamy", "Lateritic soils"],
-        nutrients: {
-          n_content: "6:1:6",
-          n_status: "medium",
-          p_status: "low-medium",
-          k_status: "medium"
-        },
-        deficiencies: ["Zn", "B"],
-        rainfall: "900-1000"
       },
       "Kanchipuram": {
         soil_types: ["Coastal alluvial", "Red sandy"],
