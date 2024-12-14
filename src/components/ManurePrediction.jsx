@@ -17,7 +17,12 @@ const ManurePrediction = ({ cropNPKRatio, onPredictionComplete }) => {
         });
 
         if (response.data.success) {
-          onPredictionComplete(response.data.predictions);
+          onPredictionComplete({
+            fym: response.data.predictions.fym,
+            vermicompost: response.data.predictions.vermicompost,
+            neem: response.data.predictions.neem,
+            currentNPK: response.data.predictions.current_npk
+          });
         }
       } catch (err) {
         console.error('Prediction error:', err);
@@ -27,7 +32,7 @@ const ManurePrediction = ({ cropNPKRatio, onPredictionComplete }) => {
     getPredictions();
   }, [cropNPKRatio, onPredictionComplete]);
 
-  return null; // Component doesn't render anything
+  return null;
 };
 
 export default ManurePrediction;

@@ -379,7 +379,7 @@ const SoilManureRecommendation = () => {
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-semibold text-green-800">{t.npkAnalysis.currentNPK}</span>
                       <span className="text-2xl font-bold text-green-700">
-                        {`${Math.round((latestValues.nitrogen * 100) / 10)}:${Math.round((latestValues.phosphorus * 100) / 10)}:${((latestValues.potassium) * 100) / 10}`}
+                        {`${Math.round((latestValues.nitrogen * 100) / 10)}:${Math.round((latestValues.phosphorus * 100) / 10)}:${(((latestValues.potassium) * 100) / 10).toFixed(1)}`}
                       </span>
                     </div>
                   </div>
@@ -418,6 +418,27 @@ const SoilManureRecommendation = () => {
                 </div>
                 <div className="p-6">
                   <div className="space-y-6">
+                    
+                  <div className="bg-gradient-to-r from-blue-50 to-white p-6 rounded-xl border border-blue-100 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+                      <h4 className="font-semibold text-blue-800 mb-3 flex items-center">
+                        <span className="text-blue-600 mr-2">💧</span>
+                        {t.organicManure.currentNPK || 'Current NPK'}
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center bg-white/50 p-3 rounded-lg">
+                          <span className="text-blue-700 flex items-center">
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                            </svg>
+                            {t.organicManure.quantity}
+                          </span>
+                          <span className="font-bold text-blue-900 text-lg">
+                            {manurePredictions?.currentNPK || 0} kg
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="bg-gradient-to-r from-amber-50 to-white p-6 rounded-xl border border-amber-100 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
                       <h4 className="font-semibold text-amber-800 mb-3 flex items-center">
                         <span className="text-amber-600 mr-2">🌾</span>
@@ -477,6 +498,8 @@ const SoilManureRecommendation = () => {
                         </div>
                       </div>
                     </div>
+
+             
                   </div>
                 </div>
               </div>

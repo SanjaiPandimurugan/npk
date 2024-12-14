@@ -10,12 +10,22 @@ CORS(app)
 def predict():
     try:
         data = request.json
-        print("Received data:", data)  # Debug print
+        print("Received data:", data)
         
-        # Load the dataset
+        # Load the dataset - Fix the path to ensure it points to the correct location
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        csv_path = os.path.join(current_dir, 'data', 'crop_manure_data.csv')
+        csv_path = os.path.join(current_dir, 'crop_manure_data.csv')  # Remove 'data' from path
+        
+        # Check if file exists and print the path for debugging
+        print(f"Looking for CSV at: {csv_path}")
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(f"CSV file not found at {csv_path}")
+            
         df = pd.read_csv(csv_path)
+        print("CSV loaded successfully")  # Debug print
+        
+        # Print column names to verify
+        print("Available columns:", df.columns.tolist())
         
         # Get NPK values from request
         n_ratio = float(data.get('nitrogen', 0))
@@ -35,12 +45,11 @@ def predict():
             
             for _, row in df.iterrows():
                 db_n, db_p, db_k = map(float, row['NPK_Ratio'].split(':'))
-                
                 difference = abs(input_n - db_n) + abs(input_p - db_p) + abs(input_k - db_k)
                 
                 if difference < min_difference:
                     min_difference = difference
-                    closest_crop = row
+                    closest_crop = row.to_dict()  # Convert to dictionary
             
             return closest_crop
         
@@ -50,12 +59,14 @@ def predict():
             raise ValueError("No matching crop found")
             
         print(f"Matched crop: {matched_crop['Crop_Name']}")
+        print(f"Matched crop data: {matched_crop}")  # Debug print
         
-        # Get manure recommendations
+        # Get predictions - directly use values from CSV
         predictions = {
             'fym': int(matched_crop['FYM_kg']),
             'vermicompost': int(matched_crop['Vermicompost_kg']),
-            'neem': int(matched_crop['Neem_Cake_kg'])
+            'neem': int(matched_crop['Neem_Cake_kg']),
+            'current_npk': int(matched_crop['CurrentNPK_kg'])
         }
         
         return jsonify({
@@ -71,7 +82,8 @@ def predict():
         })
         
     except Exception as e:
-        print(f"Error during prediction: {str(e)}")  # Debug print
+        print(f"Error during prediction: {str(e)}")
+        print(f"Full error details: ", e)  # More detailed error info
         return jsonify({
             'success': False,
             'error': str(e)

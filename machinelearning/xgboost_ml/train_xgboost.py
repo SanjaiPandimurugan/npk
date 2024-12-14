@@ -3,109 +3,70 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 import xgboost as xgb
-import joblib
-import os
+from sklearn.metrics import mean_squared_error, r2_score
 
-def prepare_data():
-    try:
-        # Get the absolute path to the data file
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        data_path = os.path.join(current_dir, 'crop_manure_data.csv')  # Changed path
-        
-        print(f"Looking for data file at: {data_path}")  # Debug print
-        
-        # Read the dataset
-        df = pd.read_csv(data_path)
-        
-        # Create label encoder
-        label_encoder = LabelEncoder()
-        
-        # Encode categorical columns
-        categorical_columns = ['Crop_Name', 'Variety', 'Season', 'Soil_Type', 'Region']
-        for col in categorical_columns:
-            df[f'{col}_Encoded'] = label_encoder.fit_transform(df[col])
-        
-        # Extract NPK ratios
-        df[['N_Ratio', 'P_Ratio', 'K_Ratio']] = df['NPK_Ratio'].str.split(':', expand=True).astype(float)
-        
-        # Prepare features
-        features = [
-            'Crop_Name_Encoded', 'Variety_Encoded', 'Season_Encoded',
-            'N_Ratio', 'P_Ratio', 'K_Ratio', 'Growth_Duration_Days',
-            'Soil_Type_Encoded', 'Region_Encoded', 'Yield_Potential_Tonnes_per_ha',
-            'Irrigation_Interval_Days'
-        ]
-        
-        X = df[features]
-        y_fym = df['FYM_kg']
-        y_vermi = df['Vermicompost_kg']
-        y_neem = df['Neem_Cake_kg']
-        
-        return X, y_fym, y_vermi, y_neem, label_encoder
-        
-    except Exception as e:
-        print(f"Error in prepare_data: {str(e)}")
-        raise
+# Read the CSV file
+df = pd.read_csv('crop_manure_data.csv')
 
-def train_models():
-    try:
-        print("Starting data preparation...")
-        X, y_fym, y_vermi, y_neem, label_encoder = prepare_data()
-        
-        # Create directory for saving models if it doesn't exist
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        models_dir = os.path.join(current_dir, 'models')
-        os.makedirs(models_dir, exist_ok=True)
-        
-        # Train models
-        models = {}
-        targets = {
-            'fym': y_fym,
-            'vermicompost': y_vermi,
-            'neem': y_neem
-        }
-        
-        for name, y in targets.items():
-            print(f"\nTraining {name} model...")
-            
-            # Split data
-            X_train, X_test, y_train, y_test = train_test_split(
-                X, y, test_size=0.2, random_state=42
-            )
-            
-            # Create and train model
-            model = xgb.XGBRegressor(
-                objective='reg:squarederror',
-                n_estimators=100,
-                max_depth=6,
-                learning_rate=0.1,
-                random_state=42
-            )
-            
-            model.fit(X_train, y_train)
-            models[name] = model
-            
-            # Print performance metrics
-            train_score = model.score(X_train, y_train)
-            test_score = model.score(X_test, y_test)
-            print(f"{name.upper()} Model Performance:")
-            print(f"Training R² Score: {train_score:.4f}")
-            print(f"Testing R² Score: {test_score:.4f}")
-        
-        # Save models and encoder
-        print("\nSaving models and encoder...")
-        joblib.dump(models, os.path.join(models_dir, 'xgboost_models.joblib'))
-        joblib.dump(label_encoder, os.path.join(models_dir, 'label_encoder.joblib'))
-        
-        print("Training completed successfully!")
-        
-    except Exception as e:
-        print(f"Error during training: {str(e)}")
-        raise
+# Prepare features and target
+# Convert categorical variables to numerical using Label Encoding
+le = LabelEncoder()
+categorical_columns = ['Crop_Name', 'Variety', 'Season', 'Soil_Type', 'Region']
+for col in categorical_columns:
+    df[col] = le.fit_transform(df[col])
 
-if __name__ == "__main__":
-    try:
-        print("Starting model training process...")
-        train_models()
-    except Exception as e:
-        print(f"Training failed: {str(e)}")
+# Split NPK_Ratio into separate columns
+df[['N_Ratio', 'P_Ratio', 'K_Ratio']] = df['NPK_Ratio'].str.split(':', expand=True).astype(float)
+
+# Extract numeric values from pH_Range
+df[['pH_Min', 'pH_Max']] = df['pH_Range'].str.split('-', expand=True).astype(float)
+
+# Features to use for training
+features = ['Crop_Name', 'Variety', 'Season', 'N_Ratio', 'P_Ratio', 'K_Ratio', 
+           'CurrentNPK_kg', 'FYM_kg', 'Vermicompost_kg', 'Neem_Cake_kg',
+           'Growth_Duration_Days', 'Soil_Type', 'pH_Min', 'pH_Max',
+           'Irrigation_Interval_Days']
+
+X = df[features]
+y = df['Yield_Potential_Tonnes_per_ha']
+
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create and train XGBoost model
+model = xgb.XGBRegressor(
+    objective='reg:squarederror',
+    n_estimators=100,
+    max_depth=6,
+    learning_rate=0.1,
+    random_state=42
+)
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Calculate metrics
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+
+print("\nModel Performance Metrics:")
+print(f"Root Mean Square Error: {rmse:.2f}")
+print(f"R-squared Score: {r2:.2f}")
+
+# Feature importance
+feature_importance = pd.DataFrame({
+    'feature': features,
+    'importance': model.feature_importances_
+})
+feature_importance = feature_importance.sort_values('importance', ascending=False)
+
+print("\nTop 10 Most Important Features:")
+print(feature_importance.head(10))
+
+# Save the model
+model.save_model('crop_yield_model.json')
+print("\nModel saved as 'crop_yield_model.json'")
